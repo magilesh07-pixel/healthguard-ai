@@ -2,11 +2,11 @@
 
 > **AI-powered clinical intelligence platform for early disease risk detection and medical scan analysis.**
 
+[![Live Site](https://img.shields.io/badge/Live-Website-emerald?style=for-the-badge&logo=vercel)](https://healthguard-ai.vercel.app)
 ![HealthGuard AI](https://img.shields.io/badge/HealthGuard-AI%20Platform-blue?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyMWMtNC45LTMuNS04LTcuNC04LTExYTggOCAwIDAgMSAxNiAwYzAgMy42LTMuMSA3LjUtOCAxMXoiLz48L3N2Zz4=)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)
-![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite)
-![Groq AI](https://img.shields.io/badge/Groq-LLaMA%203.3-orange?style=for-the-badge)
-![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite)
+![Groq AI](https://img.shields.io/badge/Groq-Llama%204-orange?style=for-the-badge)
 
 ---
 
@@ -14,19 +14,18 @@
 
 | Feature | Description |
 |---|---|
-| 🧠 **AI Scan Analyzer** | Upload MRI, CT, X-Ray scans and get a simulated clinical AI report powered by LLaMA 3.3 |
-| 📊 **Risk Dashboard** | Dynamic Cardiovascular, Metabolic & Neurological risk scores based on patient vitals |
-| 👤 **Health Profile** | Full patient record with Bio-Demographics, Clinical History & Lifestyle Factors |
-| 📋 **Patient Intake Portal** | Comprehensive health form to capture vitals, family history, and lifestyle data |
-| 🌗 **Dark / Light Mode** | Seamless theme switching with accessible contrast across all pages |
-| 🔒 **Secure API Proxy** | Groq API key is kept server-side via a Vercel serverless function — never exposed to the browser |
-| 📱 **Mobile Responsive** | Full mobile navigation with animated hamburger menu |
+| 🧠 **AI Scan Analyzer** | Real-time Vision AI analysis using Llama 4 Scout for MRI, CT, and X-ray scans. |
+| 📋 **Dynamic Protocols** | AI-generated clinical next steps tailored specifically to each scan's results. |
+| 🛡️ **Vision Verification** | Autonomous detection and rejection of non-medical images to prevent hallucinations. |
+| 📊 **Risk Dashboard** | Dynamic Cardiovascular, Metabolic & Neurological risk scores based on patient vitals. |
+| 👤 **Health Profile** | Full patient record with Bio-Demographics, Clinical History & Lifestyle Factors. |
+| 🔒 **Secure API Proxy** | Groq API key is kept server-side via Vercel serverless functions — never exposed. |
 
 ---
 
 ## 🚀 Live Demo
 
-> **[healthguard-ai.vercel.app](https://healthguard-ai.vercel.app)** *(add your link after deploying)*
+### **[healthguard-ai.vercel.app](https://healthguard-ai.vercel.app)**
 
 ---
 
@@ -75,7 +74,7 @@ healthguard-ai/
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/healthguard-ai.git
+git clone https://github.com/magilesh07-pixel/healthguard-ai.git
 cd healthguard-ai
 
 # Install dependencies
@@ -105,7 +104,8 @@ npm run dev
 
 ## 👨‍💻 Developer
 
-**M.B.Magilesh**  
+**Mahilesh**  
+GitHub: [@magilesh07-pixel](https://github.com/magilesh07-pixel)  
 📧 [magilesh8@gmail.com](mailto:magilesh8@gmail.com)
 
 ---
@@ -116,4 +116,4 @@ HealthGuard AI is a **decision-support and portfolio demonstration tool**. It do
 
 ---
 
-<p align="center">© 2026 HealthGuard AI — Designed & Developed by M.B.Magilesh</p>
+<p align="center">© 2026 HealthGuard AI — Designed & Developed by Mahilesh (@magilesh07-pixel)</p>
