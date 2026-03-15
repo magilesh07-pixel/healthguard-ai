@@ -35,7 +35,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.2-90b-vision-preview',
+        model: 'llama-3.2-90b-vision-instruct',
         messages: messages,
         response_format: { type: 'json_object' },
         temperature: 0.1,
