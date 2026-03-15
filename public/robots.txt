@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://healthguard-ai.vercel.app/sitemap.xml
