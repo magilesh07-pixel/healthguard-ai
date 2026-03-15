@@ -56,7 +56,7 @@ function HealthForm({ onUpdateData }) {
       }
 
       const data = await response.json();
-      const responseJSON = JSON.parse(data.choices[0]?.message?.content);
+      const responseJSON = data; 
       setResult(responseJSON);
 
       if (onUpdateData) {
