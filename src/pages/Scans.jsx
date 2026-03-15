@@ -41,16 +41,18 @@ function Scans() {
       const prompt = `You are an expert AI Radiologist. 
       TASK:
       1. Analyze the attached image.
-      2. VERIFY: If the image is NOT a medical scan (MRI, CT, X-ray, Ultrasound, etc.), you MUST set "status" to "Invalid Image Source" and "findings" to "Image provided is not a clinical medical scan. Please upload a valid radiological file."
+      2. VERIFY: If the image is NOT a medical scan (MRI, CT, X-ray, Ultrasound, etc.), you MUST set "status" to "Invalid Image Source", "findings" to "Image provided is not a clinical medical scan. Please upload a valid radiological file.", and "protocols" to ["Upload valid DICOM/Radiology file", "Verify image source integrity", "Re-attempt with medical imaging data"].
       3. If it IS a medical scan, provide a professional clinical report.
-      4. Use radiological terminology.
+      4. Include exactly 3 specific clinical "protocols" (next steps) tailored to the findings.
+      5. Use radiological terminology.
       
       RESPOND STRICTLY IN JSON:
       {
         "type": "${scanType}",
         "findings": "A concise professional description of what you see in this scan.",
         "confidence": "A number between 50 and 99",
-        "status": "One of: 'Normal', 'Requires Review', or 'Invalid Image Source'"
+        "status": "One of: 'Normal', 'Requires Review', or 'Invalid Image Source'",
+        "protocols": ["Protocol 1", "Protocol 2", "Protocol 3"]
       }`;
 
       // Call our secure serverless proxy with the image data
@@ -248,11 +250,7 @@ function Scans() {
                    <div className="space-y-6">
                       <h4 className="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] px-1">Mandatory Protocols</h4>
                       <div className="grid gap-4">
-                         {[
-                           "Radiological verification mandated within 24 hours.",
-                           "Cross-reference with baseline scans for growth assessment.",
-                           "Immediate clinical correlation for acute findings."
-                         ].map((protocol, idx) => (
+                         {(result.protocols || []).map((protocol, idx) => (
                            <motion.div 
                              initial={{ opacity: 0, x: -10 }}
                              animate={{ opacity: 1, x: 0 }}
