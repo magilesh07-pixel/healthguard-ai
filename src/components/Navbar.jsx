@@ -150,7 +150,7 @@ function Navbar({ theme, toggleTheme }) {
                 );
               })}
               <div className="pt-3 mt-3 border-t border-[var(--glass-border)] flex items-center justify-between px-4">
-                <span className="text-xs text-[var(--text-secondary)] font-bold uppercase tracking-widest">M.B.Magilesh</span>
+                <span className="text-xs text-[var(--text-secondary)] font-bold uppercase tracking-widest">Magilesh MB</span>
                 <Link to="/info/documentation" onClick={() => setMenuOpen(false)} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all">
                   <Settings size={18} />
                 </Link>

@@ -60,7 +60,7 @@ function HealthProfile({ data }) {
             </h3>
             <div className="space-y-4">
                 {[
-                    { label: "Full Name", value: data ? "M.B.Magilesh" : "M.B.Magilesh" },
+                    { label: "Full Name", value: data ? "Magilesh MB" : "Magilesh MB" },
                     { label: "Age / Gender", value: `${patient.age} / ${patient.sex}` },
                     { label: "BMI Index", value: `${bmi} (${bmi > 25 ? 'Overweight' : 'Normal'})` },
                     { label: "Blood Type", value: "A+ Positive" }

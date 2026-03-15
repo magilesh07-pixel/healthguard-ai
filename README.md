@@ -104,7 +104,7 @@ npm run dev
 
 ## 👨‍💻 Developer
 
-**Mahilesh**  
+**Magilesh MB**  
 GitHub: [@magilesh07-pixel](https://github.com/magilesh07-pixel)  
 📧 [magilesh8@gmail.com](mailto:magilesh8@gmail.com)
 
@@ -116,4 +116,4 @@ HealthGuard AI is a **decision-support and portfolio demonstration tool**. It do
 
 ---
 
-<p align="center">© 2026 HealthGuard AI — Designed & Developed by Mahilesh (@magilesh07-pixel)</p>
+<p align="center">© 2026 HealthGuard AI — Designed & Developed by Magilesh MB (@magilesh07-pixel)</p>

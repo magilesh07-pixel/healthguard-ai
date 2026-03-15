@@ -536,7 +536,7 @@ function Landing({ theme, toggleTheme }) {
                 </div>
 
                 <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-[var(--glass-border)] flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-[var(--text-secondary)]">
-                    <p>&copy; 2026 HealthGuard AI. Designed & Developed by M.B.Magilesh.</p>
+                    <p>&copy; 2026 HealthGuard AI. Designed & Developed by Magilesh MB.</p>
                     <div className="flex gap-8">
                         <span className="hover:text-blue-500 transition-colors cursor-pointer">HIPAA Compliant</span>
                         <span className="hover:text-blue-500 transition-colors cursor-pointer">GDPR Certified</span>
