@@ -42,23 +42,17 @@ function HealthForm({ onUpdateData }) {
     Reported Symptoms: ${formData.symptoms}`;
 
     try {
-      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const response = await fetch("/api/analyze", {
          method: "POST",
          headers: {
-            "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
-            messages: [{ role: "user", content: prompt }],
-            response_format: { type: "json_object" },
-            temperature: 0.1,
-         })
+         body: JSON.stringify({ prompt })
       });
 
       if (!response.ok) {
          const errorData = await response.json().catch(() => ({}));
-         throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+         throw new Error(errorData.error || `API Error: ${response.status}`);
       }
 
       const data = await response.json();
