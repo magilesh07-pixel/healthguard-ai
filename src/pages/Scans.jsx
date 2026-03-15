@@ -35,28 +35,32 @@ function Scans() {
     setAnalyzing(true);
     setResult(null);
     setError(null);
-
     try {
-      const prompt = `You are a highly advanced AI Radiologist. The user has just uploaded a ${scanType} scan.
-      File Name: "${selectedFile.name}"
+      const imageBase64 = await toBase64(selectedFile);
       
-      Since real-time pixel analysis is performed in the secure edge layer, provide a simulated clinical report based on the provided scan type (${scanType}). 
-      Include specific radiological terminology (e.g., "hyperintensity", "opacity", "segmentation", "artifact").
-      Be concise, professional, and clinical.
+      const prompt = `You are an expert AI Radiologist. 
+      TASK:
+      1. Analyze the attached image.
+      2. VERIFY: If the image is NOT a medical scan (MRI, CT, X-ray, Ultrasound, etc.), you MUST set "status" to "Invalid Image Source" and "findings" to "Image provided is not a clinical medical scan. Please upload a valid radiological file."
+      3. If it IS a medical scan, provide a professional clinical report.
+      4. Use radiological terminology.
       
-      You must respond strictly in JSON format matching this structure:
+      RESPOND STRICTLY IN JSON:
       {
         "type": "${scanType}",
-        "findings": "A concise 2-sentence description of a simulated clinical anomaly specific to ${scanType}.",
-        "confidence": "A number between 75 and 99",
-        "status": "Either 'Normal' or 'Requires Review'"
+        "findings": "A concise professional description of what you see in this scan.",
+        "confidence": "A number between 50 and 99",
+        "status": "One of: 'Normal', 'Requires Review', or 'Invalid Image Source'"
       }`;
 
-      // Call our secure serverless proxy — API key never leaves the server
+      // Call our secure serverless proxy with the image data
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ 
+          prompt,
+          image: imageBase64 
+        }),
       });
 
       if (!response.ok) {

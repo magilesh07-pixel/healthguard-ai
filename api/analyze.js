@@ -4,13 +4,30 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { prompt } = req.body;
+  const { prompt, image } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Missing prompt in request body' });
   }
 
   try {
+    const messages = [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: prompt },
+        ],
+      },
+    ];
+
+    // Add image if provided
+    if (image) {
+      messages[0].content.push({
+        type: 'image_url',
+        image_url: { url: image },
+      });
+    }
+
     const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -18,10 +35,10 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'user', content: prompt }],
+        model: 'llama-3.2-11b-vision-preview',
+        messages: messages,
         response_format: { type: 'json_object' },
-        temperature: 0.3,
+        temperature: 0.1,
       }),
     });
 
