@@ -60,9 +60,9 @@ function Info() {
 
   return (
     <div className="max-w-4xl mx-auto py-20 px-6">
-      <Link to="/" className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors mb-12 font-bold uppercase tracking-widest text-xs">
+      <Link to="/" className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors mb-12 font-bold uppercase tracking-widest text-[10px]">
         <ChevronLeft size={16} />
-        Back to Portal
+        Exit to Portal
       </Link>
 
       <motion.div 
@@ -91,13 +91,13 @@ function Info() {
           <div className="flex flex-wrap gap-4">
             <a 
               href="mailto:magilesh8@gmail.com?subject=Document Request - HealthGuard AI"
-              className="px-8 py-3 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-xl font-bold hover:scale-105 transition-all text-center"
+              className="px-8 py-3 bg-[var(--accent-blue)] text-white rounded-xl font-bold hover:scale-105 transition-all text-center shadow-lg"
             >
               Request Full Document
             </a>
             <a 
               href="mailto:magilesh8@gmail.com"
-              className="px-8 py-3 bg-white/5 border border-[var(--glass-border)] text-[var(--text-primary)] rounded-xl font-bold hover:bg-white/10 transition-all text-center"
+              className="px-8 py-3 bg-[var(--bg-secondary)] border border-[var(--glass-border)] text-[var(--text-primary)] rounded-xl font-bold hover:bg-[var(--glass-bg-hover)] transition-all text-center"
             >
               Contact Compliance Office
             </a>

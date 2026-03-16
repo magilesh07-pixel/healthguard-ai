@@ -8,8 +8,20 @@ import Landing from "./pages/Landing";
 import HealthProfile from "./pages/HealthProfile";
 import Info from "./pages/Info";
 
+import AiDoctor from "./pages/AiDoctor";
+
 // Wrapper to handle path-specific UI logic
-function AppContent({ patientData, setPatientData, theme, toggleTheme, mousePosition }) {
+function AppContent({ 
+    patientData, 
+    setPatientData, 
+    theme, 
+    toggleTheme, 
+    mousePosition, 
+    reportLoading, 
+    setReportLoading,
+    privacyMode,
+    togglePrivacyMode
+}) {
     const location = useLocation();
     const isLanding = location.pathname === "/";
 
@@ -27,13 +39,22 @@ function AppContent({ patientData, setPatientData, theme, toggleTheme, mousePosi
             </div>
 
             <div className="relative z-10 flex flex-col min-h-screen">
-                <Navbar theme={theme} toggleTheme={toggleTheme} />
+                <Navbar 
+                    theme={theme} 
+                    toggleTheme={toggleTheme} 
+                    patientData={patientData} 
+                    reportLoading={reportLoading}
+                    onReportStart={() => setReportLoading(true)}
+                    privacyMode={privacyMode}
+                    togglePrivacyMode={togglePrivacyMode}
+                />
                 <main className={`${isLanding ? '' : 'p-6 max-w-7xl mx-auto w-full'} flex-grow relative`}>
                     <Routes>
                         <Route path="/" element={<Landing theme={theme} toggleTheme={toggleTheme} />} />
-                        <Route path="/dashboard" element={<Home data={patientData} theme={theme} />} />
+                        <Route path="/dashboard" element={<Home data={patientData} theme={theme} setReportLoading={setReportLoading} privacyMode={privacyMode} />} />
                         <Route path="/intake" element={<Intake onUpdateData={setPatientData} />} />
                         <Route path="/scans" element={<Scans />} />
+                        <Route path="/ai-doctor" element={<AiDoctor theme={theme} />} />
                         <Route path="/profile" element={<HealthProfile data={patientData} />} /> 
                         <Route path="/info/:type" element={<Info />} /> 
                         <Route path="*" element={<Navigate to="/" replace />} />
@@ -47,6 +68,8 @@ function AppContent({ patientData, setPatientData, theme, toggleTheme, mousePosi
 function App() {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [patientData, setPatientData] = useState(null);
+    const [reportLoading, setReportLoading] = useState(false);
+    const [privacyMode, setPrivacyMode] = useState(false);
     const [theme, setTheme] = useState(() => {
         const saved = localStorage.getItem("theme");
         if (saved) return saved;
@@ -72,6 +95,8 @@ function App() {
         setTheme(prev => prev === "dark" ? "light" : "dark");
     };
 
+    const togglePrivacyMode = () => setPrivacyMode(prev => !prev);
+
     return (
         <BrowserRouter>
             <AppContent 
@@ -80,6 +105,10 @@ function App() {
                 theme={theme} 
                 toggleTheme={toggleTheme} 
                 mousePosition={mousePosition} 
+                reportLoading={reportLoading}
+                setReportLoading={setReportLoading}
+                privacyMode={privacyMode}
+                togglePrivacyMode={togglePrivacyMode}
             />
         </BrowserRouter>
     );

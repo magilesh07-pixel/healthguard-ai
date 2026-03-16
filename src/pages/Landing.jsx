@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { motion, useSpring, useTransform, useMotionValue, useInView } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, Activity, BrainCircuit, ChevronRight, Zap, Sun, Moon, Database, Lock, Globe, Server, HeartPulse, Microscope, Dna, Stethoscope, FileSearch, ChartBar } from 'lucide-react';
+import { Shield, Activity, BrainCircuit, ChevronRight, Zap, Sun, Moon, Database, Lock, Globe, Server, HeartPulse, Microscope, Dna, Stethoscope, FileSearch, ChartBar, MessageSquare, FileDown } from 'lucide-react';
 
 // Immersive Background Particles Component with Constellation lines
 const BackgroundParticles = () => {
@@ -18,51 +18,10 @@ const BackgroundParticles = () => {
 
     return (
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-            <svg className="absolute inset-0 w-full h-full opacity-20">
-                {particles.map((p1, i) =>
-                    particles.slice(i + 1).map((p2) => {
-                        const dist = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-                        if (dist < 15) {
-                            return (
-                                <line
-                                    key={`${p1.id}-${p2.id}`}
-                                    x1={`${p1.x}%`} y1={`${p1.y}%`}
-                                    x2={`${p2.x}%`} y2={`${p2.y}%`}
-                                    stroke="currentColor"
-                                    strokeWidth="0.5"
-                                    className="text-blue-500/30"
-                                />
-                            );
-                        }
-                        return null;
-                    })
-                )}
-            </svg>
-            {particles.map((particle) => (
-                <motion.div
-                    key={particle.id}
-                    className="absolute bg-blue-500/20 rounded-full"
-                    style={{
-                        width: particle.size,
-                        height: particle.size,
-                        left: `${particle.x}%`,
-                        top: `${particle.y}%`,
-                    }}
-                    animate={{
-                        x: [0, Math.random() * 100 - 50, 0],
-                        y: [0, Math.random() * 100 - 50, 0],
-                        opacity: [0.1, 0.4, 0.1],
-                    }}
-                    transition={{
-                        duration: particle.duration,
-                        repeat: Infinity,
-                        ease: "linear",
-                        delay: particle.delay,
-                    }}
-                />
-            ))}
-            {/* Grid Overlay */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,var(--bg-primary)_100%)]"></div>
+            {/* Engineering Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+            
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,var(--bg-deep)_100%)]"></div>
         </div>
     );
 };
@@ -176,11 +135,11 @@ const MetricCounter = ({ value, label, suffix = "" }) => {
     }, [isInView, value]);
 
     return (
-        <div ref={ref} className="text-center space-y-2">
-            <h4 className="text-5xl md:text-7xl font-black text-[var(--text-primary)] tracking-tighter">
+        <div ref={ref} className="text-left border-l border-[var(--border-medium)] pl-8 space-y-2">
+            <h4 className="text-4xl md:text-6xl font-bold text-[var(--text-high-contrast)] tracking-tighter">
                 {count}{suffix}
             </h4>
-            <p className="text-blue-400 font-bold uppercase tracking-widest text-xs">{label}</p>
+            <p className="text-[var(--text-tertiary)] font-medium uppercase tracking-[0.2em] text-[10px]">{label}</p>
         </div>
     );
 };
@@ -208,17 +167,6 @@ function Landing({ theme, toggleTheme }) {
         >
             <BackgroundParticles />
 
-            {/* Theme Toggle for Landing */}
-            <div className="fixed top-8 right-8 z-50">
-                <motion.button
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={toggleTheme}
-                    className="p-3 rounded-2xl bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--accent-blue)] backdrop-blur-xl shadow-lg hover:border-[var(--accent-blue)] transition-all"
-                >
-                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                </motion.button>
-            </div>
 
             {/* Hero Section */}
             <section className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center">
@@ -234,59 +182,42 @@ function Landing({ theme, toggleTheme }) {
                 </motion.div>
 
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     className="relative z-10 max-w-5xl"
                 >
-                    <div className="px-5 py-2 rounded-full border border-blue-500/20 bg-blue-500/5 backdrop-blur-md inline-flex items-center gap-2 text-blue-400 text-sm font-bold uppercase tracking-[0.2em] mb-12">
-                        <Zap size={16} className="animate-pulse" />
-                        AI-Powered Precision Medicine
+                    <div className="px-6 py-2 rounded-full border border-[var(--border-strong)] bg-white/5 backdrop-blur-md inline-flex items-center gap-3 text-emerald-400 text-xs font-bold uppercase tracking-[0.3em] mb-12">
+                        <Activity size={14} className="animate-pulse" />
+                        Next-Generation Clinical Framework
                     </div>
-
-                    <div className="relative mb-12">
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.1, 1],
-                                opacity: [0.3, 0.6, 0.3],
-                            }}
-                            transition={{ duration: 8, repeat: Infinity }}
-                            className="absolute inset-0 bg-blue-500/20 blur-[100px] -z-10 rounded-full scale-150"
-                        />
-
-                        <h1 className="text-8xl md:text-[10rem] font-black text-[var(--text-primary)] tracking-tight leading-[0.8] mb-4">
-                            Healthcare <br />
-                            <span className="relative inline-block">
-                                <span className="neon-gradient-text animate-gradient-flow bg-[length:200%_auto]">Redefined</span>
-                                <motion.span
-                                    animate={{ opacity: [0.4, 0.8, 0.4] }}
-                                    transition={{ duration: 4, repeat: Infinity }}
-                                    className="absolute inset-0 neon-gradient-text blur-[30px] -z-10 select-none"
-                                >
-                                    Redefined
-                                </motion.span>
-                            </span>
+<br />
+                    <div className="relative mb-8">
+                        <h1 className="text-7xl md:text-[8rem] font-bold text-[var(--text-high-contrast)] tracking-tight leading-[0.9] mb-4">
+                            HealthCare <br />
+                            <span className="text-[var(--text-tertiary)] font-light italic">Redefined.</span>
                         </h1>
                     </div>
 
-                    <p className="text-xl md:text-3xl text-[var(--text-secondary)] max-w-3xl mx-auto mb-16 leading-relaxed font-medium opacity-80">
-                        AI-powered early disease risk detection by analyzing multi-modal health profiles and diagnostic scans.
+                    <p className="text-xl md:text-2xl text-[var(--text-secondary)] max-w-2xl mx-auto mb-16 leading-relaxed font-normal opacity-90">
+                        Advanced predictive modeling for clinical diagnostic scans. Precision-engineered for institutional reliability and early disease detection.
                     </p>
 
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-6">
                         <button
                             onClick={() => navigate('/intake')}
-                            className="px-14 py-7 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-[2rem] font-black text-2xl shadow-[0_25px_60px_-12px_rgba(37,99,235,0.5)] transition-all flex items-center gap-4 active:scale-[0.96] group"
+                            className="bg-blue-600 hover:bg-blue-500 text-white text-lg px-12 py-5 rounded-2xl font-black flex items-center gap-3 shadow-2xl transition-all active:scale-95"
                         >
-                            Start Health Analysis
-                            <ChevronRight size={32} className="group-hover:translate-x-2 transition-transform duration-500" />
+                            Patient Portal
+                            <ChevronRight size={20} />
                         </button>
 
                         <button
                             onClick={() => navigate('/scans')}
-                            className="px-14 py-7 bg-white/5 hover:bg-white/10 text-[var(--text-primary)] border border-[var(--glass-border)] rounded-[2rem] font-bold flex items-center gap-3 transition-all backdrop-blur-xl text-xl"
+                            className="px-12 py-5 bg-slate-800/40 hover:bg-slate-700/60 text-white border border-[var(--border-medium)] rounded-2xl font-black flex items-center gap-3 transition-all backdrop-blur-xl text-lg active:scale-95"
                         >
-                            Run AI Health Scan
+                            <BrainCircuit size={20} className="text-blue-400" />
+                            Vision AI Lab
                         </button>
                     </div>
                 </motion.div>
@@ -302,21 +233,23 @@ function Landing({ theme, toggleTheme }) {
 
             {/* How it Works */}
             <Section id="how-it-works" className="bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent">
-                <div className="text-center mb-24">
+            <div className="text-center mb-24">
                     <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter">How HealthGuard Works</h2>
-                    <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">Three steps to AI-driven health insights.</p>
+                    <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">Five steps to AI-driven health insights.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent -translate-y-1/2 hidden md:block"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 relative">
+                    <div className="absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent -translate-y-1/2 hidden lg:block"></div>
 
                     {[
-                        { icon: Stethoscope, title: "1. Data Input", desc: "Share your health profile including vitals, demographics, and medical history." },
-                        { icon: Microscope, title: "2. Scan Upload", desc: "Upload blood reports, X-rays, or MRIs for deep neural analysis." },
-                        { icon: BrainCircuit, title: "3. AI Analysis", desc: "Receive immediate risk predictions and clinical-grade diagnostic indicators." }
+                        { icon: Stethoscope, title: "1. Data Input", desc: "Share your health profile including vitals, demographics, and medical history.", color: "blue" },
+                        { icon: Microscope, title: "2. Scan Upload", desc: "Upload blood reports, X-rays, or MRIs for deep neural analysis.", color: "indigo" },
+                        { icon: BrainCircuit, title: "3. AI Analysis", desc: "Receive immediate risk predictions and clinical-grade diagnostic indicators.", color: "violet" },
+                        { icon: MessageSquare, title: "4. AI Doctor", desc: "Consult Dr. M.B.Magilesh — our AI physician — for personalized health guidance and answers.", color: "cyan" },
+                        { icon: FileDown, title: "5. Clinical Report", desc: "Download a professionally formatted PDF report of your complete health analysis.", color: "emerald" },
                     ].map((step, i) => (
-                        <div key={i} className="glass-panel p-10 text-center space-y-6 relative bg-[var(--bg-secondary)] z-10 transition-transform hover:-translate-y-2">
-                            <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 mx-auto border border-blue-500/20">
+                        <div key={i} className={`glass-panel p-10 text-center space-y-6 relative bg-[var(--bg-secondary)] z-10 transition-transform hover:-translate-y-2`}>
+                            <div className={`w-20 h-20 rounded-full bg-${step.color}-500/10 flex items-center justify-center text-${step.color}-400 mx-auto border border-${step.color}-500/20`}>
                                 <step.icon size={40} />
                             </div>
                             <h3 className="text-2xl font-black">{step.title}</h3>
@@ -372,48 +305,56 @@ function Landing({ theme, toggleTheme }) {
                 </div>
             </Section>
 
-            {/* Previews */}
+            {/* Demo Video Section */}
             <Section className="pb-0 overflow-hidden">
                 <div className="text-center mb-16">
-                    <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter">Clinical Dashboard</h2>
-                    <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">A unified interface for patient monitoring and diagnostic review.</p>
+                    <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter">See It In Action</h2>
+                    <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">Watch a live demonstration of patient intake and AI-generated health analysis.</p>
                 </div>
 
                 <div className="relative group">
                     <div className="absolute inset-0 bg-blue-500/20 blur-[100px] -z-10 group-hover:bg-blue-500/30 transition-all"></div>
-                    <div className="glass-panel p-4 md:p-8 rounded-[3rem] overflow-hidden border-white/10 shadow-2xl">
-                        <div className="bg-[var(--bg-primary)] rounded-[2rem] min-h-[500px] flex items-center justify-center relative overflow-hidden">
-                            <div className="absolute top-4 left-4 flex gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+                    <div className="glass-panel p-4 md:p-6 rounded-[3rem] overflow-hidden border-white/10 shadow-2xl">
+                        <div className="rounded-[2rem] overflow-hidden bg-black relative">
+                            {/* macOS-style window dots */}
+                            <div className="absolute top-4 left-4 flex gap-2 z-10">
+                                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
                             </div>
-                            {/* Simplified UI representation */}
-                            <div className="w-full flex flex-col p-12 gap-8 opacity-40 select-none">
-                                <div className="flex gap-4">
-                                    <div className="flex-1 h-32 bg-white/5 rounded-2xl"></div>
-                                    <div className="flex-1 h-32 bg-white/5 rounded-2xl"></div>
-                                    <div className="flex-1 h-32 bg-white/5 rounded-2xl"></div>
-                                </div>
-                                <div className="w-full h-80 bg-white/5 rounded-3xl relative">
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <Activity size={100} className="text-blue-500/20 animate-pulse" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-transparent">
-                                <h4 className="text-4xl font-black mb-6">Experience the Interface</h4>
-                                <button
-                                    onClick={() => navigate('/dashboard')}
-                                    className="px-10 py-5 bg-white text-black rounded-full font-bold hover:scale-105 transition-all shadow-xl"
+
+                            {/* 16:9 Aspect Ratio Wrapper */}
+                            <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+                                <video
+                                    className="absolute inset-0 w-full h-full rounded-[2rem] object-cover"
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    controls
                                 >
-                                    Open Dashboard Preview
-                                </button>
+                                    <source src="/demo.mp4" type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
                             </div>
+                        </div>
+
+                        <div className="flex items-center justify-between mt-4 px-2">
+                            <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Live Demo — Patient Intake + AI Risk Analysis
+                            </div>
+                            <button
+                                onClick={() => navigate('/intake')}
+                                className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
+                            >
+                                Try it yourself <ChevronRight size={14} />
+                            </button>
                         </div>
                     </div>
                 </div>
             </Section>
+
 
             {/* Trust & Security */}
             <Section>
@@ -468,79 +409,58 @@ function Landing({ theme, toggleTheme }) {
                 </div>
             </Section>
 
-            {/* Footer CTA */}
-            <Section className="text-center pt-0 pb-32">
-                <div className="glass-panel py-24 px-10 relative overflow-hidden group border-blue-500/20">
-                    <motion.div
-                        animate={{
-                            rotate: 360,
-                            opacity: [0.1, 0.2, 0.1]
-                        }}
-                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                        className="absolute -top-1/2 -right-1/4 w-[1000px] h-[1000px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"
-                    />
-
-                    <h2 className="text-5xl md:text-7xl font-black mb-12 tracking-tight">Ready to verify <br /> your health risks?</h2>
-                    <button
-                        onClick={() => navigate('/intake')}
-                        className="px-16 py-8 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black text-3xl shadow-2xl transition-all active:scale-[0.96] hover:scale-[1.05] relative z-10"
-                    >
-                        Start Health Analysis
-                    </button>
-                </div>
-            </Section>
 
             {/* Main Footer */}
-            <footer className="relative border-t border-[var(--glass-border)] py-20 px-8 bg-[var(--bg-secondary)] overflow-hidden">
+            <footer className="relative border-t border-[var(--border-medium)] py-20 px-8 bg-[var(--bg-surface)] overflow-hidden">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 relative z-10">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center text-white">
+                            <div className="w-10 h-10 rounded-xl bg-emerald-500/5 flex items-center justify-center text-emerald-400 border border-emerald-500/10">
                                 <HeartPulse size={24} />
                             </div>
-                            <span className="text-2xl font-black">HealthGuard <span className="text-blue-500">AI</span></span>
+                            <span className="text-2xl font-bold tracking-tight">HealthGuard <span className="text-[var(--text-tertiary)] font-light">PRO</span></span>
                         </div>
-                        <p className="text-[var(--text-secondary)] leading-relaxed">
-                            Advancing precision medicine through clinical-grade neural networks and multi-modal data analysis.
+                        <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
+                            Advancing precision medicine through institutional-grade neural architectures and multimodal diagnostic analysis.
                         </p>
                     </div>
 
                     <div>
-                        <h5 className="font-bold text-lg mb-6 pt-2">Capabilities</h5>
-                        <ul className="space-y-4 text-[var(--text-secondary)]">
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/scans">Scan Analysis</Link></li>
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/dashboard">Risk Forecasting</Link></li>
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/intake">Health Indexing</Link></li>
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/dashboard">Clinical Reports</Link></li>
+                        <h5 className="font-semibold text-sm uppercase tracking-widest mb-6 pt-2">Operational</h5>
+                        <ul className="space-y-4 text-[var(--text-secondary)] text-sm">
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/scans">Vision AI</Link></li>
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/dashboard">Predictive Risk</Link></li>
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/intake">Clinical Intake</Link></li>
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/ai-doctor">AI Doctor</Link></li>
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/dashboard">Clinical Report</Link></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h5 className="font-bold text-lg mb-6 pt-2">Resources</h5>
-                        <ul className="space-y-4 text-[var(--text-secondary)]">
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/info/security">Security Model</Link></li>
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/info/documentation">Documentation</Link></li>
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/info/api">API Protocol</Link></li>
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/info/institutional">Institutional Access</Link></li>
+                        <h5 className="font-semibold text-sm uppercase tracking-widest mb-6 pt-2">Resources</h5>
+                        <ul className="space-y-4 text-[var(--text-secondary)] text-sm">
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/info/security">Security Protcol</Link></li>
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/info/documentation">Documentation</Link></li>
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/info/institutional">Institutional</Link></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h5 className="font-bold text-lg mb-6 pt-2">Legal</h5>
-                        <ul className="space-y-4 text-[var(--text-secondary)]">
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/info/privacy">Privacy Policy</Link></li>
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/info/disclaimer">Clinical Disclaimer</Link></li>
-                            <li className="hover:text-blue-500 transition-colors cursor-pointer"><Link to="/info/terms">Terms of Service</Link></li>
+                        <h5 className="font-semibold text-sm uppercase tracking-widest mb-6 pt-2">Infrastrcuture</h5>
+                        <ul className="space-y-4 text-[var(--text-secondary)] text-sm">
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/info/api">API Access</Link></li>
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/info/privacy">Data Privacy</Link></li>
+                            <li className="hover:text-emerald-400 transition-colors cursor-pointer"><Link to="/info/disclaimer">Clinical Disclaimer</Link></li>
                         </ul>
                     </div>
                 </div>
 
-                <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-[var(--glass-border)] flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-[var(--text-secondary)]">
-                    <p>&copy; 2026 HealthGuard AI. Designed & Developed by Magilesh MB.</p>
+                <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-[var(--border-medium)] flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">
+                    <p>&copy; 2026 HealthGuard AI. Technical Lead: Magilesh MB.</p>
                     <div className="flex gap-8">
-                        <span className="hover:text-blue-500 transition-colors cursor-pointer">HIPAA Compliant</span>
-                        <span className="hover:text-blue-500 transition-colors cursor-pointer">GDPR Certified</span>
-                        <span className="hover:text-blue-500 transition-colors cursor-pointer">FDA Class II Status</span>
+                        <span className="hover:text-emerald-400 transition-colors cursor-pointer">HIPAA READY</span>
+                        <span className="hover:text-emerald-400 transition-colors cursor-pointer">GDPR COMPLIANT</span>
+                        <span className="hover:text-emerald-400 transition-colors cursor-pointer">SOP-2 VALIDATED</span>
                     </div>
                 </div>
             </footer>

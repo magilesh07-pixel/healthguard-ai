@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 function HealthForm({ onUpdateData }) {
   const [formData, setFormData] = useState({
-    age: '', sex: '', weight: '', height: '', sysBP: '', diaBP: '', sugar: '', familyHistory: '', smoking: '', symptoms: ''
+    name: '', age: '', sex: '', weight: '', height: '', sysBP: '', diaBP: '', sugar: '', familyHistory: '', smoking: '', symptoms: ''
   });
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
@@ -26,7 +26,7 @@ function HealthForm({ onUpdateData }) {
     setError(null);
 
     const bmi = calculateBMI();
-    const prompt = `You are an expert AI Medical Triage Assistant. Analyze the following patient data. 
+    const prompt = `You are an expert AI Medical Triage Assistant. Analyze the following patient data for ${formData.name || 'the patient'}. 
     Format your response strictly in JSON with the following keys:
     1. "riskScore" (a number between 1 and 100 representing overall health risk)
     2. "analysis" (a 3-sentence summary of the primary concerns based on the data)
@@ -34,6 +34,7 @@ function HealthForm({ onUpdateData }) {
     4. "preventionSteps" (an array of up to 3 strings listing recommended preventive measures or next steps).
     
     Patient Data:
+    Name: ${formData.name || 'Anonymous'}
     Age: ${formData.age}, Sex: ${formData.sex}, BMI: ${bmi || 'Unknown'}
     Blood Pressure: ${formData.sysBP}/${formData.diaBP}
     Blood Sugar (Fasting): ${formData.sugar} mg/dL
@@ -94,6 +95,11 @@ function HealthForm({ onUpdateData }) {
             <h3 className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest flex items-center gap-2">
               <User size={14} /> Demographics
             </h3>
+
+            <div>
+              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5 ml-1">Full Name</label>
+              <input required name="name" type="text" placeholder="John Doe" value={formData.name} onChange={handleChange} className="w-full bg-[var(--bg-secondary)] border border-[var(--glass-border)] rounded-xl px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-blue-500/50 transition-all" />
+            </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -102,10 +108,10 @@ function HealthForm({ onUpdateData }) {
               </div>
               <div>
                 <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5 ml-1">Sex</label>
-                <select required name="sex" value={formData.sex} onChange={handleChange} className="w-full bg-[var(--bg-secondary)] border border-[var(--glass-border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-blue-500/50 transition-all">
-                  <option value="">Select</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
+                <select required name="sex" value={formData.sex} onChange={handleChange} className="w-full bg-[var(--bg-secondary)] border border-[var(--glass-border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-blue-500/50 transition-all appearance-none cursor-pointer">
+                  <option value="" className="bg-[var(--bg-surface)] text-[var(--text-primary)]">Select</option>
+                  <option value="male" className="bg-[var(--bg-surface)] text-[var(--text-primary)]">Male</option>
+                  <option value="female" className="bg-[var(--bg-surface)] text-[var(--text-primary)]">Female</option>
                 </select>
               </div>
             </div>
@@ -146,12 +152,12 @@ function HealthForm({ onUpdateData }) {
               </div>
               <div>
                 <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5 ml-1">Smoking History</label>
-                <select required name="smoking" value={formData.smoking} onChange={handleChange} className="w-full bg-[var(--bg-secondary)] border border-[var(--glass-border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-blue-500/50 transition-all">
-                  <option value="">Select status...</option>
-                  <option value="never">Never Smoked</option>
-                  <option value="former">Former Smoker</option>
-                  <option value="current_light">Current (Light)</option>
-                  <option value="current_heavy">Current (Heavy)</option>
+                <select required name="smoking" value={formData.smoking} onChange={handleChange} className="w-full bg-[var(--bg-secondary)] border border-[var(--glass-border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-blue-500/50 transition-all appearance-none cursor-pointer">
+                  <option value="" className="bg-[var(--bg-surface)] text-[var(--text-primary)]">Select status...</option>
+                  <option value="never" className="bg-[var(--bg-surface)] text-[var(--text-primary)]">Never Smoked</option>
+                  <option value="former" className="bg-[var(--bg-surface)] text-[var(--text-primary)]">Former Smoker</option>
+                  <option value="current_light" className="bg-[var(--bg-surface)] text-[var(--text-primary)]">Current (Light)</option>
+                  <option value="current_heavy" className="bg-[var(--bg-surface)] text-[var(--text-primary)]">Current (Heavy)</option>
                 </select>
               </div>
             </div>
