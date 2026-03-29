@@ -16,8 +16,9 @@
     "scripts": {
         "preview": "vite preview",
         "dev:frontend": "vite",
-        "dev:api": "node scripts/dev-server.js",
-        "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:api\"",
+        "dev:api:node": "node scripts/dev-server.js",
+        "dev:api:python": "py app.py",
+        "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:api:python\"",
         "build": "vite build"
     },
     "devDependencies": {

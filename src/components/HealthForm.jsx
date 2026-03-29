@@ -257,7 +257,7 @@ function HealthForm({ onUpdateData }) {
                 <div className="h-8 w-px bg-[var(--glass-border)]"></div>
                 <div className="text-center">
                    <span className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1">Status</span>
-                   <span className={`text-xs font-bold leading-none ${result.riskScore > 50 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                   <span className={`text-xs font-bold leading-none ${result.riskScore > 50 ? 'text-rose-600' : 'text-emerald-600'}`}>
                      {result.riskScore > 50 ? 'URGENT' : 'STABLE'}
                    </span>
                 </div>
@@ -286,7 +286,7 @@ function HealthForm({ onUpdateData }) {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 * idx }}
                         key={idx} 
-                        className="flex items-center gap-3 p-4 bg-rose-500/5 rounded-xl border border-rose-500/10 text-rose-200 text-sm font-medium"
+                        className="flex items-center gap-3 p-4 bg-rose-500/5 rounded-xl border border-rose-500/10 text-rose-700 text-sm font-medium"
                        >
                          <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
                          {disease}

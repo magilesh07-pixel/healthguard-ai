@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { BrainCircuit, Upload, FileImage, ShieldAlert, CheckCircle2, AlertTriangle, Image as ImageIcon, Search, Microscope, Activity, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function Scans() {
+function Scans({ onSaveHistory }) {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -14,6 +14,27 @@ function Scans() {
   const [isChatting, setIsChatting] = useState(false);
   const fileInputRef = useRef(null);
   const chatEndRef = useRef(null);
+
+  // Persistence: Load last scan on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('last_scan_result');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setResult(parsed);
+        setChatMessages([{ role: 'assistant', content: parsed.findings }]);
+      } catch (e) {
+        console.error("Failed to load saved scan", e);
+      }
+    }
+  }, []);
+
+  // Save scan result when it updates
+  useEffect(() => {
+    if (result) {
+      localStorage.setItem('last_scan_result', JSON.stringify(result));
+    }
+  }, [result]);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -76,6 +97,11 @@ function Scans() {
 
       const responseJSON = await response.json();
       setResult(responseJSON);
+
+      // PERSISTENCE: Save to centralized database history
+      if (onSaveHistory) {
+        onSaveHistory('scan', responseJSON);
+      }
 
       // Initialize chat with the AI's first diagnostic
       setChatMessages([
@@ -191,7 +217,13 @@ function Scans() {
                 )}
 
                 <button 
-                  onClick={() => { setPreviewUrl(null); setSelectedFile(null); setResult(null); setChatMessages([]); }} 
+                  onClick={() => { 
+                    setPreviewUrl(null); 
+                    setSelectedFile(null); 
+                    setResult(null); 
+                    setChatMessages([]); 
+                    localStorage.removeItem('last_scan_result');
+                  }} 
                   className="absolute text-[10px] top-6 right-6 px-6 py-2.5 rounded-xl bg-slate-800/80 text-white font-bold hover:bg-rose-600 transition-all border border-white/10 shadow-lg uppercase tracking-widest z-30"
                 >
                   Clear Session
@@ -239,7 +271,7 @@ function Scans() {
             {error && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                className="p-6 bg-rose-500/5 border border-rose-500/20 rounded-2xl text-rose-400 text-[15px] flex items-start gap-4"
+                className="p-6 bg-rose-500/5 border border-rose-500/20 rounded-2xl text-rose-700 text-[15px] flex items-start gap-4"
               >
                 <AlertTriangle size={20} className="shrink-0 mt-0.5" />
                 <div>
@@ -282,11 +314,11 @@ function Scans() {
                   <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl"></div>
 
                   <div className="flex flex-wrap gap-3 mb-6 relative z-10">
-                    <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${result.status === 'Normal' ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-rose-400 bg-rose-500/10 border border-rose-500/20'}`}>
+                    <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${result.status === 'Normal' ? 'text-emerald-700 bg-emerald-500/10 border border-emerald-500/20' : 'text-rose-700 bg-rose-500/10 border border-rose-500/20'}`}>
                       {result.status === 'Normal' ? <CheckCircle2 size={12} /> : <ShieldAlert size={12} />}
                       Classification: {result.status}
                     </div>
-                    <div className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-indigo-300 bg-indigo-500/10 border border-indigo-500/20">
+                    <div className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-500/10 border border-indigo-500/20">
                       Source: {result.type}
                     </div>
                   </div>

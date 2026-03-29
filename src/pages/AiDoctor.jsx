@@ -48,7 +48,7 @@ function TypingIndicator() {
   );
 }
 
-function AiDoctor({ theme }) {
+function AiDoctor() {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: GREETING, id: 0 }
   ]);
@@ -135,8 +135,8 @@ function AiDoctor({ theme }) {
 
       {/* Disclaimer Banner */}
       <div className="flex items-center gap-3 px-4 py-3 bg-amber-500/5 border border-amber-500/15 rounded-xl flex-shrink-0">
-        <AlertTriangle size={16} className="text-amber-400 flex-shrink-0" />
-        <p className="text-xs text-amber-300/80">
+        <AlertTriangle size={16} className="text-amber-600 flex-shrink-0" />
+        <p className="text-xs text-amber-700/90">
           <strong>Medical Disclaimer:</strong> Dr. M.B.Magilesh provides informational guidance only and is not a substitute for professional medical advice, diagnosis, or treatment.
         </p>
       </div>
@@ -197,7 +197,7 @@ function AiDoctor({ theme }) {
               <button
                 key={i}
                 onClick={() => handleSend(text)}
-                className="flex items-center gap-2 text-xs px-3 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 hover:bg-blue-500/20 hover:text-blue-200 transition-all font-medium"
+                className="flex items-center gap-2 text-xs px-3 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 hover:bg-blue-500/20 hover:text-blue-800 transition-all font-medium"
               >
                 <Icon size={12} />
                 {text}
@@ -210,9 +210,9 @@ function AiDoctor({ theme }) {
         {/* Error Banner */}
         {error && (
           <div className="mx-4 mb-2 flex items-center gap-2 px-4 py-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl">
-            <WifiOff size={14} className="text-rose-400 flex-shrink-0" />
-            <p className="text-xs text-rose-300">{error}</p>
-            <button onClick={() => setError(null)} className="ml-auto text-rose-400 hover:text-rose-200 text-xs">✕</button>
+            <WifiOff size={14} className="text-rose-600 flex-shrink-0" />
+            <p className="text-xs text-rose-700">{error}</p>
+            <button onClick={() => setError(null)} className="ml-auto text-rose-600 hover:text-rose-800 text-xs">✕</button>
           </div>
         )}
 

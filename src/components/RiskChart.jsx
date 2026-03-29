@@ -10,16 +10,16 @@ const mockData = [
   { year: '2025', risk: 26 },
 ];
 
-function RiskChart({ newDataPoint, theme }) {
+function RiskChart({ newDataPoint }) {
   const chartData = newDataPoint 
     ? [...mockData, { year: 'NOW', risk: Number(newDataPoint) }] 
     : mockData;
 
-  const isDark = theme === 'dark';
-  const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-  const labelColor = isDark ? '#94a3b8' : '#64748b';
-  const tooltipBg = isDark ? '#080808' : '#ffffff';
-  const accentColor = isDark ? '#38bdf8' : '#0284c7';
+  const isDark = false;
+  const gridColor = 'rgba(0,0,0,0.05)';
+  const labelColor = '#64748b';
+  const tooltipBg = '#ffffff';
+  const accentColor = '#0284c7';
 
   return (
     <div className="w-full h-80 pt-4">

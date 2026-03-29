@@ -5,23 +5,83 @@ import { Shield, Activity, BrainCircuit, ChevronRight, Zap, Sun, Moon, Database,
 
 // Immersive Background Particles Component with Constellation lines
 const BackgroundParticles = () => {
-    const particles = useMemo(() => {
-        return Array.from({ length: 30 }).map((_, i) => ({
-            id: i,
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            size: Math.random() * 3 + 1,
-            duration: Math.random() * 20 + 20,
-            delay: Math.random() * -20
-        }));
-    }, []);
-
     return (
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-            {/* Engineering Grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+            {/* Fine Grid Pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(var(--border-strong)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20"></div>
             
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,var(--bg-deep)_100%)]"></div>
+            {/* Linear Grid Overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--border-light)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-light)_1px,transparent_1px)] bg-[size:120px_120px] opacity-30"></div>
+
+            {/* Floating Clinical Nodes */}
+            <div className="absolute inset-0 overflow-hidden">
+                {[
+                  { Icon: Activity, size: 24, top: '15%', left: '10%', delay: 0 },
+                  { Icon: BrainCircuit, size: 32, top: '25%', left: '85%', delay: 2 },
+                  { Icon: HeartPulse, size: 20, top: '70%', left: '15%', delay: 1.5 },
+                  { Icon: Dna, size: 28, top: '80%', left: '75%', delay: 3 },
+                  { Icon: Microscope, size: 22, top: '10%', left: '60%', delay: 4 },
+                ].map(({ Icon, size, top, left, delay }, i) => (
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ 
+                            opacity: [0.05, 0.15, 0.05],
+                            y: [0, -40, 0],
+                            rotate: [0, 10, 0]
+                        }}
+                        transition={{ 
+                            duration: 10 + Math.random() * 5, 
+                            repeat: Infinity, 
+                            delay,
+                            ease: "easeInOut"
+                        }}
+                        style={{ top, left, position: 'absolute' }}
+                        className="text-[var(--accent-indigo)]"
+                    >
+                        <Icon size={size} strokeWidth={1} />
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* Gradient Radial Fades */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,var(--accent-indigo-glow)_0%,transparent_50%)]"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,var(--accent-emerald-glow)_0%,transparent_50%)]"></div>
+
+            {/* Noise Texture Overlay */}
+            <div className="absolute inset-0 opacity-[0.015] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] blend-multiply"></div>
+
+            {/* Scanning Blueprint Lines */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {[...Array(3)].map((_, i) => (
+                    <motion.div
+                        key={`h-${i}`}
+                        className="absolute w-full h-[1px] bg-[var(--accent-indigo)] opacity-[0.05]"
+                        initial={{ top: `${20 + i * 30}%`, left: '-100%' }}
+                        animate={{ left: '100%' }}
+                        transition={{ 
+                            duration: 15 + i * 5, 
+                            repeat: Infinity, 
+                            ease: "linear",
+                            delay: i * 2 
+                        }}
+                    />
+                ))}
+                {[...Array(3)].map((_, i) => (
+                    <motion.div
+                        key={`v-${i}`}
+                        className="absolute h-full w-[1px] bg-[var(--accent-emerald)] opacity-[0.05]"
+                        initial={{ left: `${30 + i * 25}%`, top: '-100%' }}
+                        animate={{ top: '100%' }}
+                        transition={{ 
+                            duration: 20 + i * 4, 
+                            repeat: Infinity, 
+                            ease: "linear",
+                            delay: i * 3 
+                        }}
+                    />
+                ))}
+            </div>
         </div>
     );
 };
@@ -46,65 +106,85 @@ const Section = ({ children, className = "" }) => {
 const NeuralIris = () => {
     return (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
-            {/* Core Neural Pulse */}
+            {/* Core Neural Pulse - Multi-layered */}
             <motion.div
                 animate={{
-                    scale: [1, 1.4, 1],
-                    opacity: [0.3, 0.6, 0.3]
+                    scale: [0.8, 1.2, 0.8],
+                    opacity: [0.2, 0.4, 0.2]
                 }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute w-[600px] h-[600px] bg-blue-500/30 rounded-full blur-[100px]"
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute w-[600px] h-[600px] bg-[var(--accent-indigo-glow)] rounded-full blur-[120px]"
+            />
+            <motion.div
+                animate={{
+                    scale: [1.2, 0.9, 1.2],
+                    opacity: [0.1, 0.3, 0.1]
+                }}
+                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute w-[800px] h-[800px] bg-[var(--accent-emerald-glow)] rounded-full blur-[150px]"
             />
 
-            <svg className="w-[800px] h-[800px] opacity-70" viewBox="0 0 200 200">
+            <svg className="w-[1000px] h-[1000px] opacity-20 lg:opacity-30" viewBox="0 0 200 200">
                 {/* Outer Rotating Ring */}
                 <motion.circle
-                    cx="100" cy="100" r="90"
+                    cx="100" cy="100" r="95"
                     stroke="currentColor"
-                    strokeWidth="0.8"
-                    strokeDasharray="6 12"
+                    strokeWidth="0.5"
+                    strokeDasharray="4 8"
                     fill="none"
-                    className="text-blue-400/50"
+                    className="text-[var(--accent-indigo)]"
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+                    transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                />
+                <motion.circle
+                    cx="100" cy="100" r="85"
+                    stroke="currentColor"
+                    strokeWidth="0.3"
+                    strokeDasharray="1 10"
+                    fill="none"
+                    className="text-[var(--accent-emerald)]"
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
                 />
                 {/* Secondary Counter-Rotating Ring */}
                 <motion.circle
                     cx="100" cy="100" r="75"
                     stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeDasharray="30 120"
+                    strokeWidth="1"
+                    strokeDasharray="20 100"
                     fill="none"
-                    className="text-indigo-400/60"
+                    className="text-[var(--accent-indigo)]"
                     animate={{ rotate: -360 }}
                     transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                 />
-                {/* Inner Data Arc */}
+                
+                {/* Data Arcs */}
                 <motion.path
-                    d="M 40 100 A 60 60 0 0 1 160 100"
+                    d="M 50 100 A 50 50 0 0 1 150 100"
                     stroke="currentColor"
-                    strokeWidth="3"
+                    strokeWidth="1.5"
                     fill="none"
-                    className="text-blue-500"
+                    className="text-[var(--accent-indigo)]"
                     animate={{
-                        opacity: [0.1, 0.8, 0.1],
+                        opacity: [0, 0.5, 0],
                         pathLength: [0, 1, 0]
                     }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                 />
-                {/* Central Core Nodes */}
+
+                {/* Central Nodes */}
                 {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
                     <motion.circle
                         key={i}
-                        cx={100 + 55 * Math.cos((angle * Math.PI) / 180)}
-                        cy={100 + 55 * Math.sin((angle * Math.PI) / 180)}
-                        r="2"
-                        className="fill-blue-300"
+                        cx={100 + 65 * Math.cos((angle * Math.PI) / 180)}
+                        cy={100 + 65 * Math.sin((angle * Math.PI) / 180)}
+                        r="1"
+                        className="fill-[var(--accent-indigo)]"
                         animate={{
-                            opacity: [0.3, 1, 0.3],
-                            scale: [1, 1.5, 1]
+                            opacity: [0.1, 0.6, 0.1],
+                            scale: [1, 2, 1]
                         }}
-                        transition={{ duration: 3, repeat: Infinity, delay: i * 0.3 }}
+                        transition={{ duration: 4, repeat: Infinity, delay: i * 0.5 }}
                     />
                 ))}
             </svg>
@@ -144,7 +224,7 @@ const MetricCounter = ({ value, label, suffix = "" }) => {
     );
 };
 
-function Landing({ theme, toggleTheme }) {
+function Landing() {
     const navigate = useNavigate();
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -191,11 +271,11 @@ function Landing({ theme, toggleTheme }) {
                         <Activity size={14} className="animate-pulse" />
                         Next-Generation Clinical Framework
                     </div>
-<br />
+                    <br />
                     <div className="relative mb-8">
-                        <h1 className="text-7xl md:text-[8rem] font-bold text-[var(--text-high-contrast)] tracking-tight leading-[0.9] mb-4">
+                        <h1 className="text-7xl md:text-[8rem] font-bold text-[var(--text-high-contrast)] tracking-tight leading-[0.9] mb-4 drop-shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
                             HealthCare <br />
-                            <span className="text-[var(--text-tertiary)] font-light italic">Redefined.</span>
+                            <span className="text-[var(--accent-indigo)] font-light italic">Redefined.</span>
                         </h1>
                     </div>
 
@@ -233,7 +313,7 @@ function Landing({ theme, toggleTheme }) {
 
             {/* How it Works */}
             <Section id="how-it-works" className="bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent">
-            <div className="text-center mb-24">
+                <div className="text-center mb-24">
                     <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter">How HealthGuard Works</h2>
                     <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">Five steps to AI-driven health insights.</p>
                 </div>

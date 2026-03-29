@@ -1,36 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import Intake from "./pages/Intake";
 import Scans from "./pages/Scans";
 import Landing from "./pages/Landing";
 import HealthProfile from "./pages/HealthProfile";
 import Info from "./pages/Info";
-
+import Login from "./pages/Login";
 import AiDoctor from "./pages/AiDoctor";
 
 // Wrapper to handle path-specific UI logic
-function AppContent({ 
-    patientData, 
-    setPatientData, 
-    theme, 
-    toggleTheme, 
-    mousePosition, 
-    reportLoading, 
+function AppContent({
+    patientData,
+    setPatientData,
+    mousePosition,
+    reportLoading,
     setReportLoading,
     privacyMode,
-    togglePrivacyMode
+    togglePrivacyMode,
+    onSaveHistory
 }) {
     const location = useLocation();
     const isLanding = location.pathname === "/";
+    const theme = "light";
 
     return (
         <div className={`min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans selection:bg-blue-500/30 relative overflow-hidden flex flex-col transition-colors duration-500`}>
             {/* Animated Background Orbs */}
-            <div 
-              className="fixed inset-0 pointer-events-none z-0 overflow-hidden transition-transform duration-700 ease-out"
-              style={{ transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)` }}
+            <div
+                className="fixed inset-0 pointer-events-none z-0 overflow-hidden transition-transform duration-700 ease-out"
+                style={{ transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)` }}
             >
                 <div className="bg-orb orb-1"></div>
                 <div className="bg-orb orb-2"></div>
@@ -39,10 +39,8 @@ function AppContent({
             </div>
 
             <div className="relative z-10 flex flex-col min-h-screen">
-                <Navbar 
-                    theme={theme} 
-                    toggleTheme={toggleTheme} 
-                    patientData={patientData} 
+                <Navbar
+                    patientData={patientData}
                     reportLoading={reportLoading}
                     onReportStart={() => setReportLoading(true)}
                     privacyMode={privacyMode}
@@ -50,13 +48,13 @@ function AppContent({
                 />
                 <main className={`${isLanding ? '' : 'p-6 max-w-7xl mx-auto w-full'} flex-grow relative`}>
                     <Routes>
-                        <Route path="/" element={<Landing theme={theme} toggleTheme={toggleTheme} />} />
-                        <Route path="/dashboard" element={<Home data={patientData} theme={theme} setReportLoading={setReportLoading} privacyMode={privacyMode} />} />
+                        <Route path="/" element={<Landing />} />
+                        <Route path="/dashboard" element={<Dashboard data={patientData} setReportLoading={setReportLoading} privacyMode={privacyMode} />} />
                         <Route path="/intake" element={<Intake onUpdateData={setPatientData} />} />
-                        <Route path="/scans" element={<Scans />} />
-                        <Route path="/ai-doctor" element={<AiDoctor theme={theme} />} />
-                        <Route path="/profile" element={<HealthProfile data={patientData} />} /> 
-                        <Route path="/info/:type" element={<Info />} /> 
+                        <Route path="/scans" element={<Scans onSaveHistory={onSaveHistory} />} />
+                        <Route path="/ai-doctor" element={<AiDoctor />} />
+                        <Route path="/profile" element={<HealthProfile data={patientData} />} />
+                        <Route path="/info/:type" element={<Info />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </main>
@@ -70,16 +68,43 @@ function App() {
     const [patientData, setPatientData] = useState(null);
     const [reportLoading, setReportLoading] = useState(false);
     const [privacyMode, setPrivacyMode] = useState(false);
-    const [theme, setTheme] = useState(() => {
-        const saved = localStorage.getItem("theme");
-        if (saved) return saved;
-        return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-    });
 
     useEffect(() => {
-        document.documentElement.setAttribute("data-theme", theme);
-        localStorage.setItem("theme", theme);
-    }, [theme]);
+        // Fetch history if needed (standalone mode)
+        const fetchLatestIntake = async () => {
+            try {
+                const res = await fetch('/api/history');
+                const history = await res.json();
+                const latestIntake = history.find(entry => entry.type === 'intake');
+                if (latestIntake && !patientData) {
+                    setPatientData(latestIntake.data);
+                }
+            } catch (e) {
+                console.error("History sync error:", e);
+            }
+        };
+        fetchLatestIntake();
+    }, []);
+
+
+    const handleSaveHistory = async (type, entryData) => {
+        await fetch('/api/history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ type, data: entryData })
+        });
+    };
+
+    const handleUpdatePatientData = async (newData) => {
+        setPatientData(newData);
+        handleSaveHistory('intake', newData);
+    };
+
+    useEffect(() => {
+        document.documentElement.setAttribute("data-theme", "light");
+    }, []);
 
     useEffect(() => {
         const handleMouseMove = (e) => {
@@ -91,27 +116,22 @@ function App() {
         return () => window.removeEventListener("mousemove", handleMouseMove);
     }, []);
 
-    const toggleTheme = () => {
-        setTheme(prev => prev === "dark" ? "light" : "dark");
-    };
-
     const togglePrivacyMode = () => setPrivacyMode(prev => !prev);
 
     return (
         <BrowserRouter>
-            <AppContent 
-                patientData={patientData} 
-                setPatientData={setPatientData}
-                theme={theme} 
-                toggleTheme={toggleTheme} 
-                mousePosition={mousePosition} 
+            <AppContent
+                patientData={patientData}
+                setPatientData={handleUpdatePatientData}
+                mousePosition={mousePosition}
                 reportLoading={reportLoading}
                 setReportLoading={setReportLoading}
                 privacyMode={privacyMode}
                 togglePrivacyMode={togglePrivacyMode}
+                onSaveHistory={handleSaveHistory}
             />
         </BrowserRouter>
     );
 }
 
-export default App;
+export default App;
