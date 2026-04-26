@@ -7,7 +7,6 @@ import Scans from "./pages/Scans";
 import Landing from "./pages/Landing";
 import HealthProfile from "./pages/HealthProfile";
 import Info from "./pages/Info";
-import Login from "./pages/Login";
 import AiDoctor from "./pages/AiDoctor";
 
 // Wrapper to handle path-specific UI logic
@@ -23,7 +22,6 @@ function AppContent({
 }) {
     const location = useLocation();
     const isLanding = location.pathname === "/";
-    const theme = "light";
 
     return (
         <div className={`min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans selection:bg-blue-500/30 relative overflow-hidden flex flex-col transition-colors duration-500`}>
@@ -75,9 +73,11 @@ function App() {
             try {
                 const res = await fetch('/api/history');
                 const history = await res.json();
-                const latestIntake = history.find(entry => entry.type === 'intake');
-                if (latestIntake && !patientData) {
-                    setPatientData(latestIntake.data);
+                if (Array.isArray(history)) {
+                    const latestIntake = history.find(entry => entry.type === 'intake');
+                    if (latestIntake && !patientData) {
+                        setPatientData(latestIntake.data);
+                    }
                 }
             } catch (e) {
                 console.error("History sync error:", e);

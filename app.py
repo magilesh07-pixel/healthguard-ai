@@ -10,11 +10,8 @@ load_dotenv()
 
 app = Flask(__name__, static_folder='dist')
 CORS(app)
-
 import sqlite3
-import hashlib
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
 
 DB_PATH = "healthguard.db"
 
@@ -27,16 +24,6 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
-    # Users table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        name TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-    ''')
     # History table (for intake records and scans)
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS history (
@@ -44,8 +31,7 @@ def init_db():
         user_id INTEGER NOT NULL,
         type TEXT NOT NULL, -- 'intake' or 'scan'
         data TEXT NOT NULL, -- JSON string
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id)
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     ''')
     conn.commit()
@@ -54,48 +40,10 @@ def init_db():
 # Initialize DB on start
 init_db()
 
-# Auth & History Endpoints
-@app.route('/api/register', methods=['POST'])
-def register():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
-    name = data.get('name')
-
-    if not email or not password or not name:
-        return jsonify({"error": "Missing fields"}), 400
-
-    hashed_pw = generate_password_hash(password)
-    
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (email, password, name) VALUES (?, ?, ?)", (email, hashed_pw, name))
-        conn.commit()
-        user_id = cursor.lastrowid
-        conn.close()
-        return jsonify({"message": "User registered", "user": {"id": user_id, "email": email, "name": name}})
-    except sqlite3.IntegrityError:
-        return jsonify({"error": "Email already exists"}), 400
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
-
-    conn = get_db_connection()
-    user = conn.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
-    conn.close()
-
-    if user and check_password_hash(user['password'], password):
-        return jsonify({"user": {"id": user['id'], "email": user['email'], "name": user['name']}})
-    
-    return jsonify({"error": "Invalid credentials"}), 401
-
+# History Endpoints (Global access for the demo)
 @app.route('/api/history', methods=['GET', 'POST'])
 def history():
-    user_id = request.headers.get('X-User-ID', 1) # Default to user 1 for global history
+    user_id = 1 # Static ID for the demo since login is removed
 
     if request.method == 'POST':
         data = request.json

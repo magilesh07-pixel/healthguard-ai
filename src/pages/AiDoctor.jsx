@@ -114,7 +114,7 @@ function AiDoctor() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="flex flex-col h-[calc(100vh-88px)] max-w-4xl mx-auto gap-4"
+      className="flex flex-col h-[calc(100vh-24px)] max-w-4xl mx-auto gap-4 pt-28 pb-6"
     >
       {/* Page Header */}
       <div className="flex items-center justify-between flex-shrink-0 pt-2">

@@ -4,7 +4,6 @@
     "private": true,
     "dependencies": {
         "framer-motion": "^12.36.0",
-        "groq-sdk": "^1.1.1",
         "html2canvas": "^1.4.1",
         "jspdf": "^4.2.0",
         "lucide-react": "^0.577.0",
@@ -14,23 +13,20 @@
         "recharts": "^2.15.4"
     },
     "scripts": {
-        "preview": "vite preview",
         "dev:frontend": "vite",
-        "dev:api:node": "node scripts/dev-server.js",
-        "dev:api:python": "py app.py",
-        "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:api:python\"",
-        "build": "vite build"
+        "dev:backend": "py app.py",
+        "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+        "build": "vite build",
+        "preview": "vite preview"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
         "@vitejs/plugin-react": "^4.3.4",
         "autoprefixer": "^10.4.20",
         "concurrently": "^9.2.1",
-        "cors": "^2.8.6",
-        "dotenv": "^17.3.1",
-        "express": "^5.2.1",
         "postcss": "^8.4.49",
         "tailwindcss": "^4.0.0",
         "vite": "^6.0.0"
     }
 }
+

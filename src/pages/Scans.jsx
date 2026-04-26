@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { BrainCircuit, Upload, FileImage, ShieldAlert, CheckCircle2, AlertTriangle, Image as ImageIcon, Search, Microscope, Activity, MessageSquare } from 'lucide-react';
+import { BrainCircuit, Upload, FileImage, ShieldAlert, CheckCircle2, AlertTriangle, Image as ImageIcon, Search, Microscope, Activity, MessageSquare, Shield, ScanLine } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Scans({ onSaveHistory }) {
@@ -15,7 +15,6 @@ function Scans({ onSaveHistory }) {
   const fileInputRef = useRef(null);
   const chatEndRef = useRef(null);
 
-  // Persistence: Load last scan on mount
   useEffect(() => {
     const saved = localStorage.getItem('last_scan_result');
     if (saved) {
@@ -29,7 +28,6 @@ function Scans({ onSaveHistory }) {
     }
   }, []);
 
-  // Save scan result when it updates
   useEffect(() => {
     if (result) {
       localStorage.setItem('last_scan_result', JSON.stringify(result));
@@ -76,7 +74,7 @@ function Scans({ onSaveHistory }) {
       {
         "type": "${scanType}",
         "findings": "A concise professional description of what you see in this scan.",
-        "confidence": "A number between 50 and 99",
+        "confidence": "A precise clinical certainty score between 50 and 99 (e.g., 87 instead of round numbers like 90)",
         "status": "One of: 'Normal', 'Requires Review', or 'Invalid Image Source'",
         "protocols": ["Protocol 1", "Protocol 2", "Protocol 3"]
       }`;
@@ -98,12 +96,10 @@ function Scans({ onSaveHistory }) {
       const responseJSON = await response.json();
       setResult(responseJSON);
 
-      // PERSISTENCE: Save to centralized database history
       if (onSaveHistory) {
         onSaveHistory('scan', responseJSON);
       }
 
-      // Initialize chat with the AI's first diagnostic
       setChatMessages([
         { role: 'assistant', content: responseJSON.findings }
       ]);
@@ -128,16 +124,22 @@ function Scans({ onSaveHistory }) {
     setIsChatting(true);
 
     try {
-      const imageBase64 = await toBase64(selectedFile);
+      let imageBase64 = null;
+      if (selectedFile) {
+        imageBase64 = await toBase64(selectedFile);
+      } else if (result && result.findings) {
+        console.warn("No file selected for chat context.");
+      }
 
-      // We send the full history to the multimodal model
-      // The backend expects 'messages' for historical chat
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [
-            { role: 'user', content: [{ type: 'text', text: "Context: This is the medical image we are discussing." }, { type: 'image_url', image_url: { url: imageBase64 } }] },
+            { role: 'user', content: [
+              { type: 'text', text: "Context: This is the medical image we are discussing." }, 
+              ...(imageBase64 ? [{ type: 'image_url', image_url: { url: imageBase64 } }] : [])
+            ] },
             ...newMessages
           ]
         }),
@@ -155,263 +157,257 @@ function Scans({ onSaveHistory }) {
     }
   };
 
+  const getStatusColor = (status) => {
+     if (status === 'Normal') return 'emerald';
+     if (status === 'Invalid Image Source') return 'rose';
+     return 'amber';
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="max-w-6xl mx-auto space-y-8"
+      className="max-w-7xl mx-auto px-6 pt-32 pb-20"
     >
-      <header className="mb-12 border-b border-[var(--border-medium)] pb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-        <div className="flex items-center gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/5 flex items-center justify-center text-emerald-400 border border-emerald-500/10">
-            <BrainCircuit size={36} />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-2">
+            <Shield size={14} className="text-blue-600" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Radiology Neural Net v4.1</span>
           </div>
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-2">Predictive Vision Engine</h1>
-            <p className="text-[var(--text-secondary)] text-lg">Sub-millimeter structural analysis for clinical-grade diagnostics.</p>
+          <h1 className="text-5xl font-black tracking-tight text-slate-900">Vision <span className="text-blue-600">Analytics</span> Lab</h1>
+          <p className="text-slate-500 font-medium max-w-xl">
+             Sub-millimeter structural analysis leveraging multi-modal deep learning for clinical-grade anomaly detection.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        
+        {/* Input Interface */}
+        <div className="xl:col-span-5 flex flex-col space-y-6">
+          <div className="glass-panel p-8 bg-slate-50 flex-1 flex flex-col relative overflow-hidden group border-slate-200">
+             {/* Decorative Background */}
+             <div className="absolute -top-32 -right-32 text-blue-500/5 group-hover:text-blue-500/10 transition-colors pointer-events-none">
+                 <ScanLine size={300} />
+             </div>
+
+             <div className="relative z-10 flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-8">
+                   <h2 className="text-xl font-bold text-slate-900">Image Source</h2>
+                   <span className="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm">
+                      DICOM / JPEG / PNG
+                   </span>
+                </div>
+
+                <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" className="hidden" />
+
+                {!previewUrl ? (
+                  <div 
+                    className="flex-1 flex flex-col items-center justify-center text-center cursor-pointer bg-white border-2 border-dashed border-slate-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all p-10 min-h-[300px]"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 mb-6 shadow-inner">
+                      <Upload size={28} />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">Drag & Drop Scan</h3>
+                    <p className="text-sm text-slate-500 mb-8 max-w-xs leading-relaxed">
+                      Securely upload medical imaging for immediate neural processing.
+                    </p>
+                    <div className="btn-primary w-full max-w-[200px] justify-center shadow-lg shadow-blue-500/20">
+                      <FileImage size={18} />
+                      Browse Files
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex-1 flex flex-col">
+                    <div className="relative w-full aspect-square md:aspect-video xl:aspect-square bg-slate-900 rounded-2xl overflow-hidden shadow-inner mb-6 group/img">
+                      <img src={previewUrl} alt="Scan Preview" className="w-full h-full object-contain p-2" />
+                      
+                      {analyzing && (
+                        <motion.div
+                          initial={{ top: "0%" }}
+                          animate={{ top: "100%" }}
+                          transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+                          className="absolute left-0 right-0 h-1 bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,1)] z-20 pointer-events-none"
+                        />
+                      )}
+
+                      <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-end opacity-0 group-hover/img:opacity-100 transition-opacity">
+                         <span className="text-[10px] font-black uppercase tracking-widest text-white">{selectedFile?.name}</span>
+                         <button 
+                           onClick={(e) => { e.stopPropagation(); setPreviewUrl(null); setSelectedFile(null); setResult(null); setChatMessages([]); localStorage.removeItem('last_scan_result'); }} 
+                           className="text-xs font-bold bg-white/20 hover:bg-rose-500 text-white px-3 py-1.5 rounded-lg transition-colors backdrop-blur-md"
+                         >
+                           Clear
+                         </button>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleAnalyze}
+                      disabled={!selectedFile || analyzing}
+                      className="btn-primary w-full justify-center text-lg py-5 rounded-xl shadow-lg shadow-blue-500/20"
+                    >
+                      <Microscope size={20} className={analyzing ? 'animate-spin' : ''} />
+                      {analyzing ? 'Processing Matrix...' : 'Execute Neural Scan'}
+                    </button>
+                  </div>
+                )}
+             </div>
           </div>
         </div>
-      </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div className="space-y-8">
-          {/* Upload Section */}
-          <motion.div
-            className="glass-panel p-10 flex flex-col items-center justify-center border-2 border-dashed border-[var(--border-medium)] transition-all min-h-[450px] bg-gradient-to-b from-transparent to-emerald-500/5"
-          >
-          <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" className="hidden" />
-
-
-          {!previewUrl ? (
-            <div 
-              className="text-center group cursor-pointer w-full" 
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <div className="w-24 h-24 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-8 mx-auto shadow-2xl group-hover:scale-110 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/30 transition-all duration-500">
-                <Upload size={40} className="text-blue-400 group-hover:text-emerald-400 transition-colors" />
-              </div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-3">Initialize Digital Scan</h1>
-              <p className="text-[var(--text-secondary)] max-w-xs mx-auto mb-10 text-[15px] leading-relaxed">
-                Upload DICOM, MRI, or CT imaging for institutional-grade structural analysis.
-              </p>
-
-              <div className="inline-flex px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all items-center gap-3 shadow-xl active:scale-95">
-                <FileImage size={22} />
-                Select Image Source
-              </div>
-            </div>
-          ) : (
-            <div className="w-full flex flex-col items-center py-4">
-              <div className="relative w-full max-w-md aspect-video mb-8 rounded-3xl overflow-hidden border border-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.1)] bg-black/40 p-4">
-                <img src={previewUrl} alt="Scan Preview" className="w-full h-full object-contain rounded-xl" />
-
-                {/* Laser Scan Animation */}
-                {analyzing && (
+        {/* Intelligence Output */}
+        <div className="xl:col-span-7 flex flex-col space-y-6 min-h-[600px]">
+          <div className="glass-panel p-8 md:p-10 flex-1 flex flex-col">
+             
+             <AnimatePresence mode="wait">
+                {!analyzing && !result && !error && (
                   <motion.div
-                    initial={{ top: "0%" }}
-                    animate={{ top: "100%" }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    className="absolute left-0 right-0 h-1 bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)] z-20 pointer-events-none"
-                  />
+                    key="standby"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="flex-1 flex flex-col items-center justify-center text-center"
+                  >
+                    <div className="w-24 h-24 rounded-full bg-slate-50 flex items-center justify-center mb-6">
+                      <BrainCircuit size={48} className="text-slate-300" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">Systems Online</h3>
+                    <p className="text-slate-500 max-w-sm">Awaiting radiological input to commence autonomous diagnostic pipeline.</p>
+                  </motion.div>
                 )}
 
-                <button 
-                  onClick={() => { 
-                    setPreviewUrl(null); 
-                    setSelectedFile(null); 
-                    setResult(null); 
-                    setChatMessages([]); 
-                    localStorage.removeItem('last_scan_result');
-                  }} 
-                  className="absolute text-[10px] top-6 right-6 px-6 py-2.5 rounded-xl bg-slate-800/80 text-white font-bold hover:bg-rose-600 transition-all border border-white/10 shadow-lg uppercase tracking-widest z-30"
-                >
-                  Clear Session
-                </button>
-              </div>
-
-                  <button
-                onClick={handleAnalyze}
-                disabled={!selectedFile || analyzing}
-                className="btn-primary w-full justify-center text-lg !py-4 rounded-xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-blue-400/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                <div className="relative flex items-center gap-3">
-                  <Microscope size={22} className={analyzing ? 'animate-spin' : ''} />
-                  {analyzing ? 'Synchronizing Neural Model...' : 'Execute Structural Analysis'}
-                </div>
-              </button>
-            </div>
-          )}
-        </motion.div>
-        </div>
-
-        {/* Results Section */}
-        <div className="glass-panel p-8 flex flex-col min-h-[450px]">
-          <div className="flex justify-between items-start mb-8">
-            <h2 className="text-sm font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] flex items-center gap-3">
-              <Search size={16} className="text-indigo-400" />
-              Diagnostic Reasoning Engine
-            </h2>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {!analyzing && !result && !error && (
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="flex-1 flex flex-col items-center justify-center text-center p-10"
-              >
-                <div className="w-20 h-20 rounded-full bg-[var(--bg-secondary)] border border-[var(--glass-border)] flex items-center justify-center mb-6 opacity-40">
-                  <BrainCircuit size={40} className="text-[var(--text-secondary)]" />
-                </div>
-                <p className="text-[var(--text-secondary)] font-medium max-w-xs leading-relaxed">System standby. Awaiting medical image source for autonomous evaluation.</p>
-              </motion.div>
-            )}
-
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                className="p-6 bg-rose-500/5 border border-rose-500/20 rounded-2xl text-rose-700 text-[15px] flex items-start gap-4"
-              >
-                <AlertTriangle size={20} className="shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold block mb-1">Processing Failure</span>
-                  {error}
-                </div>
-              </motion.div>
-            )}
-
-            {analyzing && (
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="flex-1 flex flex-col items-center justify-center space-y-8"
-              >
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-full border-4 border-indigo-500/10 border-t-indigo-500 animate-[spin_1s_linear_infinite]"></div>
-                  <BrainCircuit size={32} className="absolute inset-0 m-auto text-indigo-400 animate-pulse" />
-                </div>
-                <div className="text-center space-y-3">
-                  <p className="text-[var(--text-primary)] text-xl font-bold tracking-tight">Autonomous Structural Scan</p>
-                  <div className="flex gap-1 justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce [animation-delay:-0.3s]"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce [animation-delay:-0.15s]"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce"></div>
-                  </div>
-                </div>
-                <div className="w-full bg-[var(--bg-secondary)] rounded-2xl p-4 border border-[var(--glass-border)] space-y-4">
-                  <div className="h-2 w-full bg-[var(--glass-border)] rounded-full shimmer overflow-hidden"></div>
-                  <div className="h-2 w-2/3 bg-[var(--glass-border)] rounded-full shimmer overflow-hidden"></div>
-                </div>
-              </motion.div>
-            )}
-
-            {result && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                className="space-y-8"
-              >
-                <div className="bg-[var(--bg-secondary)] rounded-3xl p-8 border border-indigo-500/20 relative overflow-hidden backdrop-blur-xl">
-                  <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl"></div>
-
-                  <div className="flex flex-wrap gap-3 mb-6 relative z-10">
-                    <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${result.status === 'Normal' ? 'text-emerald-700 bg-emerald-500/10 border border-emerald-500/20' : 'text-rose-700 bg-rose-500/10 border border-rose-500/20'}`}>
-                      {result.status === 'Normal' ? <CheckCircle2 size={12} /> : <ShieldAlert size={12} />}
-                      Classification: {result.status}
+                {error && (
+                  <motion.div
+                    key="error"
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    className="p-6 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 flex items-start gap-4"
+                  >
+                    <AlertTriangle size={24} className="shrink-0 mt-0.5 text-rose-600" />
+                    <div>
+                      <span className="font-bold text-lg block mb-1">Execution Failure</span>
+                      <p className="text-rose-700">{error}</p>
                     </div>
-                    <div className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-500/10 border border-indigo-500/20">
-                      Source: {result.type}
+                  </motion.div>
+                )}
+
+                {analyzing && (
+                  <motion.div
+                    key="analyzing"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="flex-1 flex flex-col items-center justify-center space-y-8"
+                  >
+                    <div className="relative">
+                      <div className="w-32 h-32 rounded-full border-[6px] border-slate-100 border-t-blue-600 animate-[spin_1.5s_cubic-bezier(0.68,-0.55,0.265,1.55)_infinite]"></div>
+                      <ScanLine size={48} className="absolute inset-0 m-auto text-blue-600" />
                     </div>
-                  </div>
-
-                  <p className="text-xl text-[var(--text-primary)] mb-8 relative z-10 leading-relaxed font-bold tracking-tight">"{result.findings}"</p>
-
-                  <div className="space-y-3 relative z-10">
-                    <div className="flex items-center justify-between text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest px-1">
-                      <span>Diagnostic Confidence</span>
-                      <span className="text-[var(--text-primary)]">{result.confidence}%</span>
+                    <div className="text-center space-y-3">
+                      <p className="text-2xl font-bold text-slate-900 tracking-tight">Interrogating Node Data</p>
+                      <p className="text-sm text-slate-500 uppercase tracking-widest font-bold">Applying segmentation models...</p>
                     </div>
-                    <div className="h-3 w-full bg-[var(--bg-primary)] rounded-full overflow-hidden border border-[var(--glass-border)] p-0.5">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${result.confidence}%` }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        className={`h-full rounded-full shadow-[0_0_20px_rgba(99,102,241,0.4)] ${result.confidence > 85 ? 'bg-gradient-to-r from-blue-500 to-indigo-500' : 'bg-gradient-to-r from-rose-500 to-indigo-600'}`}
-                      />
+                  </motion.div>
+                )}
+
+                {result && (
+                  <motion.div
+                    key="result"
+                    initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+                    className="flex-1 flex flex-col text-left"
+                  >
+                    <div className="flex justify-between items-start mb-8">
+                       <h2 className="text-2xl font-black text-slate-900">Diagnostic Yield</h2>
+                       <div className="flex gap-2">
+                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                           {result.type}
+                         </span>
+                         <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border flex items-center gap-1.5 ${getStatusColor(result.status) === 'emerald' ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : getStatusColor(result.status) === 'rose' ? 'text-rose-700 bg-rose-50 border-rose-200' : 'text-amber-700 bg-amber-50 border-amber-200'}`}>
+                           {getStatusColor(result.status) === 'emerald' ? <CheckCircle2 size={12}/> : <ShieldAlert size={12}/>}
+                           {result.status}
+                         </span>
+                       </div>
                     </div>
-                  </div>
-                </div>
 
-                <div className="space-y-6">
-                  <h4 className="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] px-1">Mandatory Protocols</h4>
-                  <div className="grid gap-4">
-                    {(result.protocols || []).map((protocol, idx) => (
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 * idx }}
-                        key={idx}
-                        className="flex items-center gap-4 text-sm text-[var(--text-primary)] bg-[var(--bg-secondary)] p-5 rounded-2xl border border-[var(--glass-border)] group hover:bg-[var(--glass-bg-hover)] transition-all"
-                      >
-                        <div className="bg-indigo-500/20 text-indigo-400 p-2 rounded-xl group-hover:scale-110 transition-transform">
-                          <CheckCircle2 size={18} />
-                        </div>
-                        <span className="font-medium">{protocol}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
+                    <div className="bg-slate-900 text-white p-8 rounded-2xl shadow-premium mb-8 relative overflow-hidden group">
+                       <div className="absolute -top-10 -right-10 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-700">
+                          <BrainCircuit size={180} />
+                       </div>
+                       <p className="text-xl leading-relaxed font-medium relative z-10">
+                         "{result.findings}"
+                       </p>
+                       {result.status !== 'Invalid Image Source' && (
+                         <div className="mt-8 pt-6 border-t border-white/10 relative z-10 flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Confidence Interval</span>
+                            <span className="text-2xl font-black">{result.confidence}%</span>
+                         </div>
+                       )}
+                    </div>
 
-                {/* Interactive Vision Chat */}
-                <div className="mt-12 pt-8 border-t border-[var(--glass-border)]">
-                  <h4 className="text-xs font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] px-1 mb-6 flex items-center gap-2">
-                    <Activity size={14} className="text-indigo-400" />
-                    Interactive Clinical Dialogue
-                  </h4>
-
-                  <div className="space-y-4 max-h-[400px] overflow-y-auto mb-6 pr-2 custom-scrollbar">
-                    {chatMessages.slice(1).map((msg, idx) => (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        key={idx}
-                        className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div className={`max-w-[85%] p-4 rounded-2xl text-[14px] leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--glass-border)] rounded-tl-none'}`}>
-                          {msg.content}
-                        </div>
-                      </motion.div>
-                    ))}
-                    {isChatting && (
-                      <div className="flex justify-start">
-                        <div className="bg-[var(--bg-secondary)] p-4 rounded-2xl rounded-tl-none border border-[var(--glass-border)] flex gap-1">
-                          <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></div>
-                          <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                          <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                        </div>
+                    <div className="space-y-4 mb-10">
+                      <h4 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] px-1">Recommended Protocols</h4>
+                      <div className="grid gap-3">
+                        {(result.protocols || []).map((protocol, idx) => (
+                          <div key={idx} className="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
+                            <div className="mt-0.5 text-blue-600 bg-white shadow-sm p-1 rounded-md border border-slate-200">
+                              <CheckCircle2 size={16} />
+                            </div>
+                            <span className="text-sm font-semibold text-slate-700 leading-snug">{protocol}</span>
+                          </div>
+                        ))}
                       </div>
-                    )}
-                    <div ref={chatEndRef} />
-                  </div>
+                    </div>
 
-                  <form onSubmit={handleChatSubmit} className="relative">
-                    <input
-                      type="text"
-                      value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
-                      placeholder="Ask a medical clinical question about this scan..."
-                      className="w-full bg-[var(--bg-secondary)] border border-[var(--glass-border)] rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-indigo-500/50 pr-16 text-[var(--text-primary)] transition-all"
-                    />
-                    <button
-                      disabled={isChatting}
-                      className="absolute right-3 top-3 bottom-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition-all disabled:opacity-50"
-                    >
-                      Send
-                    </button>
-                  </form>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                    {/* Interactive Hub */}
+                    <div className="mt-auto pt-8 border-t border-slate-200">
+                      <div className="flex items-center gap-3 mb-6">
+                         <div className="bg-blue-100 text-blue-600 p-2 rounded-xl">
+                           <MessageSquare size={16} />
+                         </div>
+                         <h4 className="text-sm font-bold text-slate-900">Clinical Consultation Desk</h4>
+                      </div>
+
+                      <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl h-[300px] flex flex-col">
+                        <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar mb-4">
+                          {chatMessages.slice(1).map((msg, idx) => (
+                            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                              <div className={`max-w-[85%] p-4 text-sm leading-relaxed rounded-2xl ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-sm shadow-md' : 'bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm'}`}>
+                                {msg.content}
+                              </div>
+                            </div>
+                          ))}
+                          {isChatting && (
+                            <div className="flex justify-start">
+                              <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-bl-sm flex gap-1.5 shadow-sm items-center h-[52px]">
+                                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+                                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                              </div>
+                            </div>
+                          )}
+                          <div ref={chatEndRef} />
+                        </div>
+
+                        <form onSubmit={handleChatSubmit} className="relative mt-auto">
+                          <input
+                            type="text"
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            placeholder="Interrogate findings..."
+                            className="w-full bg-white border border-slate-200 rounded-xl px-5 py-3.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-medium pr-24 shadow-sm"
+                          />
+                          <button
+                            disabled={isChatting}
+                            className="absolute right-2 top-2 bottom-2 px-5 bg-slate-900 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50 text-xs tracking-wide"
+                          >
+                            Send
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+             </AnimatePresence>
+          </div>
         </div>
 
       </div>

@@ -35,8 +35,9 @@
 - **Styling**: Vanilla CSS with custom CSS variables (dark/light theme)
 - **AI**: Groq API — LLaMA 3.3 70B Versatile
 - **Routing**: React Router DOM v6
-- **Backend**: Vercel Serverless Functions (API proxy)
-- **Deployment**: Vercel
+- **Backend**: Flask (Python) — Auth, SQLite History, AI Proxy
+- **Database**: SQLite (healthguard.db)
+- **Deployment**: Vercel / Heroku / DigitalOcean
 
 ---
 
@@ -44,28 +45,17 @@
 
 ```
 healthguard-ai/
-├── api/
-│   └── analyze.js          # Serverless proxy — keeps API key secret
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   ├── HealthForm.jsx
-│   │   └── RiskChart.jsx
-│   ├── pages/
-│   │   ├── Landing.jsx     # Landing page with animations
-│   │   ├── Home.jsx        # Risk Intelligence Dashboard
-│   │   ├── Scans.jsx       # AI Scan Analyzer
-│   │   ├── Intake.jsx      # Patient Intake Portal
-│   │   ├── HealthProfile.jsx
-│   │   └── Info.jsx        # Resources & Legal hub
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css           # Global theme variables
-├── .env.example
-├── vercel.json
-└── index.html
+├── public/                # Static assets
+├── src/                   # React frontend
+│   ├── components/        # UI components
+│   ├── pages/             # Page views
+│   └── main.jsx           # Entry point
+├── app.py                 # Flask Backend (Auth, History, AI Proxy)
+├── healthguard.db         # SQLite Database
+├── requirements.txt       # Python dependencies
+├── package.json           # Frontend dependencies & scripts
+├── vite.config.js         # Vite configuration
+└── index.html             # HTML entry point
 ```
 
 ---

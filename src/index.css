@@ -2,45 +2,46 @@
 @import "tailwindcss";
 
 :root {
-    /* Light Institutional Palette (Default) */
-    --bg-deep: #f8fafc;
-    --bg-primary: #f8fafc;
-    --bg-surface: #ffffff;
-    --bg-surface-elevated: #f1f5f9;
+    /* Premium Clinical Design System */
+    --bg-deep: #fcfdfe;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
     
     --text-high-contrast: #0f172a;
-    --text-primary: #1e293b;
+    --text-primary: #334155;
     --text-secondary: #64748b;
     --text-tertiary: #94a3b8;
 
-    --accent-emerald: #059669;
-    --accent-emerald-glow: rgba(16, 185, 129, 0.1);
+    /* Clinical Hues */
+    --accent-blue: #2563eb;
+    --accent-blue-soft: rgba(37, 99, 235, 0.08);
     --accent-indigo: #4338ca;
-    --accent-indigo-glow: rgba(99, 102, 241, 0.1);
-    --accent-slate: #64748b;
+    --accent-indigo-soft: rgba(67, 56, 202, 0.08);
+    --accent-emerald: #059669;
+    --accent-emerald-soft: rgba(5, 150, 105, 0.08);
+    --accent-rose: #e11d48;
+    --accent-rose-soft: rgba(225, 29, 72, 0.08);
 
-    --border-light: rgba(0, 0, 0, 0.04);
-    --border-medium: rgba(0, 0, 0, 0.08);
-    --border-strong: rgba(0, 0, 0, 0.12);
+    --border-light: rgba(226, 232, 240, 0.6);
+    --border-medium: rgba(203, 213, 225, 0.8);
+    --glass-border: rgba(148, 163, 184, 0.15);
 
-    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --shadow-heavy: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 8px 30px rgba(0,0,0,0.04);
+    --shadow-premium: 0 20px 50px rgba(0,0,0,0.06);
 
-    --radius-sm: 6px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
 }
-
-/* Only Light Theme is active */
 
 body {
     background-color: var(--bg-deep);
     color: var(--text-primary);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    margin: 0;
     -webkit-font-smoothing: antialiased;
-    letter-spacing: -0.011em;
+    letter-spacing: -0.0125em;
     line-height: 1.6;
     overflow-x: hidden;
 }
@@ -48,69 +49,113 @@ body {
 h1, h2, h3, h4, .font-heading {
     font-family: 'Outfit', sans-serif;
     color: var(--text-high-contrast);
-    letter-spacing: -0.025em;
-    font-weight: 600;
+    letter-spacing: -0.03em;
+    font-weight: 700;
 }
 
-code, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-}
-
-/* Form Elements Standard */
-input, select, textarea {
-    font-size: 0.875rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-select {
-    cursor: pointer;
-}
-
-option {
-    background-color: var(--bg-surface);
-    color: var(--text-primary);
-    padding: 10px;
-}
-
-/* Modern Native Select Reset */
-select:focus {
-    outline: none;
-    border-color: var(--accent-indigo);
-    box-shadow: 0 0 0 4px var(--accent-indigo-glow);
-}
-
-/* Engineering-Grade UI Components */
+/* Institutional Components */
 .glass-panel {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-medium);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-heavy);
-    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: var(--shadow-md);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
-    overflow: hidden;
 }
 
 .glass-panel:hover {
-    transform: translateY(-2px);
-    border-color: var(--border-strong);
-    background: var(--bg-surface-elevated);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-premium);
+    border-color: var(--accent-blue-soft);
 }
 
-.glass-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(circle at top left, rgba(255,255,255,0.03), transparent 70%);
+.btn-primary {
+    background: var(--accent-blue);
+    color: white;
+    font-weight: 600;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15);
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(37, 99, 235, 0.25);
+}
+
+.clinical-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid currentColor;
+}
+
+/* Decorative Meshes */
+.bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.08;
+    z-index: -1;
     pointer-events: none;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.orb-1 { width: 60vw; height: 60vw; background: var(--accent-blue); top: -20%; left: -10%; }
+.orb-2 { width: 50vw; height: 50vw; background: var(--accent-indigo); bottom: -15%; right: -5%; }
+.orb-3 { width: 40vw; height: 40vw; background: var(--accent-emerald); top: 30%; left: 40%; }
+
+/* Form Elements Styling */
+input, select, textarea {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    background: var(--bg-primary);
+    box-shadow: 0 0 0 4px var(--accent-blue-soft);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+.neon-gradient-text {
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-indigo));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
 }
 
 .shimmer {
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.03) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     background-size: 200% 100%;
     animation: shimmer 2s infinite linear;
 }
@@ -118,58 +163,4 @@ select:focus {
 @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
-}
-
-.neon-gradient-text {
-    background: linear-gradient(135deg, var(--accent-indigo) 0%, var(--text-high-contrast) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 800;
-}
-
-.btn-primary {
-    background: var(--accent-indigo);
-    color: white;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-sm);
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-.btn-primary:hover {
-    background: #4f46e5;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
-}
-
-/* Subtle Animated Orbs - More Professional Version */
-.bg-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(140px);
-    opacity: 0.15;
-    z-index: 0;
-    pointer-events: none;
-}
-
-.orb-1 { width: 40vw; height: 40vw; background: var(--accent-indigo); top: -10%; left: -5%; }
-.orb-2 { width: 45vw; height: 45vw; background: var(--accent-emerald); bottom: -10%; right: -5%; }
-
-.custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
-    border-radius: 2px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-indigo);
 }
