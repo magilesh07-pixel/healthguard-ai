@@ -16,8 +16,6 @@ function AppContent({
     mousePosition,
     reportLoading,
     setReportLoading,
-    privacyMode,
-    togglePrivacyMode,
     onSaveHistory
 }) {
     const location = useLocation();
@@ -41,16 +39,14 @@ function AppContent({
                     patientData={patientData}
                     reportLoading={reportLoading}
                     onReportStart={() => setReportLoading(true)}
-                    privacyMode={privacyMode}
-                    togglePrivacyMode={togglePrivacyMode}
                 />
                 <main className={`${isLanding ? '' : 'p-6 max-w-7xl mx-auto w-full'} flex-grow relative`}>
                     <Routes>
                         <Route path="/" element={<Landing />} />
-                        <Route path="/dashboard" element={<Dashboard data={patientData} setReportLoading={setReportLoading} privacyMode={privacyMode} />} />
+                        <Route path="/dashboard" element={<Dashboard data={patientData} setReportLoading={setReportLoading} />} />
                         <Route path="/intake" element={<Intake onUpdateData={setPatientData} />} />
                         <Route path="/scans" element={<Scans onSaveHistory={onSaveHistory} />} />
-                        <Route path="/ai-doctor" element={<AiDoctor />} />
+                        <Route path="/ai-doctor" element={<AiDoctor onSaveHistory={onSaveHistory} />} />
                         <Route path="/profile" element={<HealthProfile data={patientData} />} />
                         <Route path="/info/:type" element={<Info />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
@@ -65,7 +61,6 @@ function App() {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [patientData, setPatientData] = useState(null);
     const [reportLoading, setReportLoading] = useState(false);
-    const [privacyMode, setPrivacyMode] = useState(false);
 
     useEffect(() => {
         // Fetch history if needed (standalone mode)
@@ -116,7 +111,7 @@ function App() {
         return () => window.removeEventListener("mousemove", handleMouseMove);
     }, []);
 
-    const togglePrivacyMode = () => setPrivacyMode(prev => !prev);
+
 
     return (
         <BrowserRouter>
@@ -126,8 +121,6 @@ function App() {
                 mousePosition={mousePosition}
                 reportLoading={reportLoading}
                 setReportLoading={setReportLoading}
-                privacyMode={privacyMode}
-                togglePrivacyMode={togglePrivacyMode}
                 onSaveHistory={handleSaveHistory}
             />
         </BrowserRouter>

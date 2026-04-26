@@ -48,7 +48,7 @@ function TypingIndicator() {
   );
 }
 
-function AiDoctor() {
+function AiDoctor({ onSaveHistory }) {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: GREETING, id: 0 }
   ]);
@@ -57,6 +57,31 @@ function AiDoctor() {
   const [error, setError] = useState(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      try {
+        const res = await fetch('/api/history');
+        const history = await res.json();
+        if (Array.isArray(history)) {
+          const chatEntries = history
+            .filter(entry => entry.type === 'chat')
+            .map(entry => entry.data)
+            .flat();
+          
+          if (chatEntries.length > 0) {
+            setMessages([
+              { role: 'assistant', content: GREETING, id: 0 },
+              ...chatEntries
+            ]);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load chat history", e);
+      }
+    };
+    fetchChatHistory();
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -92,7 +117,14 @@ function AiDoctor() {
 
       const data = await res.json();
       const reply = data.content || "I'm sorry, I couldn't generate a response. Please try again.";
-      setMessages(prev => [...prev, { role: 'assistant', content: reply, id: Date.now() + 1 }]);
+      const assistantEntry = { role: 'assistant', content: reply, id: Date.now() + 1 };
+      const finalMessages = [...updatedMessages, assistantEntry];
+      setMessages(finalMessages);
+
+      if (onSaveHistory) {
+        // Save the latest interaction (user msg + assistant reply)
+        onSaveHistory('chat', [userEntry, assistantEntry]);
+      }
     } catch (err) {
       console.error('AI Doctor API error:', err);
       setError(err.message || 'Connection failed. Please try again.');

@@ -17,6 +17,9 @@ function HealthProfile({ data }) {
   };
 
   const bmi = data?.bmi || (78 / Math.pow(175 / 100, 2)).toFixed(1);
+  const symptoms = data?.vitals?.symptoms || 'None reported';
+  const aiAnalysis = data?.aiResult?.analysis || 'Clinical analysis pending data acquisition.';
+  const riskScore = data?.aiResult?.riskScore || null;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -157,11 +160,29 @@ function HealthProfile({ data }) {
                 <div className="space-y-6">
                     <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                         <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
-                            <Calendar size={14} className="text-blue-500" /> Family History Node
+                            <Activity size={14} className="text-blue-500" /> Clinical Presentation
                         </h5>
                         <p className="text-slate-900 font-medium text-lg leading-relaxed">
-                            {patient.familyHistory}
+                            {symptoms}
                         </p>
+                    </div>
+
+                    <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Shield size={60} className="text-blue-600" />
+                        </div>
+                        <h5 className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-3 flex items-center gap-2">
+                            <ShieldCheck size={14} className="text-blue-500" /> AI Diagnostic Insight
+                        </h5>
+                        <p className="text-blue-900 font-bold italic leading-relaxed relative z-10">
+                            "{aiAnalysis}"
+                        </p>
+                        {riskScore && (
+                            <div className="mt-4 flex items-center gap-2">
+                                <span className="text-[10px] font-black uppercase text-blue-400 tracking-widest">Risk Index:</span>
+                                <span className="text-xl font-black text-blue-700">{riskScore}/100</span>
+                            </div>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

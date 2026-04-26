@@ -1,96 +1,59 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Brain, Heart, Activity, Shield, Zap, Thermometer } from 'lucide-react';
 
-const AnatomyMap = ({ highlight, className = "" }) => {
-  // Region coordinates/paths (Simplified SVG mapping)
-  const regions = {
-    head: { cx: 50, cy: 15, rx: 8, ry: 10, label: "Brain/Head" },
-    chest: { x: 35, y: 28, width: 30, height: 15, rx: 5, label: "Thoracic/Chest" },
-    abdomen: { x: 38, y: 45, width: 24, height: 12, rx: 4, label: "Abdominal" },
-    spine: { x: 48, y: 30, width: 4, height: 35, rx: 2, label: "Spine/Neural" },
-    limbs: { path: "M 30 35 L 15 60 M 70 35 L 85 60 M 40 70 L 35 95 M 60 70 L 65 95", label: "Musculoskeletal" }
-  };
-
-  const isActive = (key) => highlight?.toLowerCase() === key;
+const AnatomyMap = ({ risks }) => {
+  const systems = [
+    { name: 'Neurological', icon: Brain, risk: risks?.neuro || 0, color: 'text-indigo-500', bg: 'bg-indigo-50' },
+    { name: 'Cardiovascular', icon: Heart, risk: risks?.cardio || 0, color: 'text-rose-500', bg: 'bg-rose-50' },
+    { name: 'Metabolic', icon: Zap, risk: risks?.metabolic || 0, color: 'text-amber-500', bg: 'bg-amber-50' },
+    { name: 'Respiratory', icon: Activity, risk: 12, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { name: 'Immune System', icon: Shield, risk: 8, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { name: 'Homeostasis', icon: Thermometer, risk: 15, color: 'text-cyan-500', bg: 'bg-cyan-50' },
+  ];
 
   return (
-    <div className={`relative ${className} bg-[var(--bg-secondary)] rounded-3xl p-6 border border-[var(--glass-border)] flex flex-col items-center justify-center overflow-hidden h-full min-h-[300px]`}>
-      <h3 className="absolute top-4 left-6 text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em]">Diagnostic Mapping</h3>
-      
-      <svg viewBox="0 0 100 100" className="w-full h-full max-w-[200px] opacity-80">
-        {/* Human Silhouette Base */}
-        <path 
-          d="M 50 5 C 45 5 42 10 42 15 C 42 20 45 25 50 25 C 55 25 58 20 58 15 C 58 10 55 5 50 5 Z M 40 27 C 30 27 25 35 25 45 C 25 55 35 60 40 60 L 40 95 L 60 95 L 60 60 C 65 60 75 55 75 45 C 75 35 70 27 60 27 Z" 
-          fill="currentColor" 
-          className="text-[var(--text-secondary)] opacity-10"
-        />
+    <div className="glass-panel p-6 bg-white border border-slate-200">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h3 className="text-xl font-bold text-slate-900">Systemic Integrity Map</h3>
+          <p className="text-xs text-slate-400 font-medium mt-1 uppercase tracking-widest leading-none">Real-time Bio-Symmetry Analysis</p>
+        </div>
+      </div>
 
-        {/* Highlightable Regions */}
-        
-        {/* Head */}
-        <motion.ellipse 
-          cx={regions.head.cx} cy={regions.head.cy} rx={regions.head.rx} ry={regions.head.ry}
-          fill={isActive('head') ? 'rgba(99, 102, 241, 0.4)' : 'transparent'}
-          stroke={isActive('head') ? '#6366f1' : 'rgba(255,255,255,0.05)'}
-          strokeWidth="0.5"
-          animate={isActive('head') ? { scale: [1, 1.05, 1], opacity: [0.6, 1, 0.6] } : {}}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
-
-        {/* Chest */}
-        <motion.rect 
-          x={regions.chest.x} y={regions.chest.y} width={regions.chest.width} height={regions.chest.height} rx={regions.chest.rx}
-          fill={isActive('chest') ? 'rgba(99, 102, 241, 0.4)' : 'transparent'}
-          stroke={isActive('chest') ? '#6366f1' : 'rgba(255,255,255,0.05)'}
-          strokeWidth="0.5"
-          animate={isActive('chest') ? { opacity: [0.4, 0.8, 0.4] } : {}}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
-
-        {/* Abdomen */}
-        <motion.rect 
-          x={regions.abdomen.x} y={regions.abdomen.y} width={regions.abdomen.width} height={regions.abdomen.height} rx={regions.abdomen.rx}
-          fill={isActive('abdomen') ? 'rgba(99, 102, 241, 0.4)' : 'transparent'}
-          stroke={isActive('abdomen') ? '#6366f1' : 'rgba(255,255,255,0.05)'}
-          strokeWidth="0.5"
-          animate={isActive('abdomen') ? { opacity: [0.4, 0.8, 0.4] } : {}}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
-
-        {/* Spine */}
-        <motion.rect 
-          x={regions.spine.x} y={regions.spine.y} width={regions.spine.width} height={regions.spine.height} rx={regions.spine.rx}
-          fill={isActive('spine') ? 'rgba(99, 102, 241, 0.4)' : 'transparent'}
-          stroke={isActive('spine') ? '#6366f1' : 'rgba(255,255,255,0.05)'}
-          strokeWidth="0.5"
-          animate={isActive('spine') ? { opacity: [0.4, 0.8, 0.4] } : {}}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
-
-        {/* Limbs (Complex Path) */}
-        <motion.path 
-          d={regions.limbs.path}
-          fill="none"
-          stroke={isActive('limbs') ? '#6366f1' : 'rgba(255,255,255,0.05)'}
-          strokeWidth="4"
-          strokeLinecap="round"
-          animate={isActive('limbs') ? { opacity: [0.4, 0.8, 0.4] } : {}}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
-      </svg>
-
-      {highlight && (
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-4 flex items-center gap-2"
-        >
-          <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">
-            {regions[highlight.toLowerCase()]?.label || highlight} Active
-          </span>
-        </motion.div>
-      )}
+      <div className="grid grid-cols-2 gap-4">
+        {systems.map((s, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.05 }}
+            className={`relative p-5 rounded-2xl border border-slate-100 ${s.bg} group hover:shadow-md transition-all cursor-default`}
+          >
+            <div className="flex items-center gap-4 mb-3">
+              <div className={`p-2 rounded-lg bg-white shadow-sm ${s.color}`}>
+                <s.icon size={20} />
+              </div>
+              <span className="text-xs font-bold text-slate-700">{s.name}</span>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between items-end">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Stress Load</span>
+                <span className={`text-sm font-black ${s.risk > 40 ? 'text-rose-600' : 'text-slate-900'}`}>{s.risk}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-white rounded-full overflow-hidden border border-slate-200/50">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${s.risk}%` }}
+                  transition={{ duration: 1, delay: 0.5 + (i * 0.1) }}
+                  className={`h-full rounded-full ${s.risk > 40 ? 'bg-rose-500' : 'bg-blue-500'}`} 
+                />
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 };

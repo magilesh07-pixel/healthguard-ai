@@ -2,26 +2,19 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Activity, HeartPulse, Brain, ChevronRight, Database, Clock, AlertTriangle, TrendingUp, Shield, Lock, FileText, Share2 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import RiskChart from '../components/RiskChart';
+import AnatomyMap from '../components/AnatomyMap';
 import * as jspdfInAllStyles from 'jspdf';
 import html2canvas from 'html2canvas';
 
 const jsPDF = jspdfInAllStyles.jsPDF || jspdfInAllStyles.default || jspdfInAllStyles;
 
-function Dashboard({ data, setReportLoading, privacyMode }) {
+function Dashboard({ data, setReportLoading }) {
   const navigate = useNavigate();
   const [hoveredField, setHoveredField] = useState(null);
   const [aiDeepAnalysis, setAiDeepAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const getBlurStyle = (fieldName) => {
-    if (!privacyMode) return {};
-    return {
-      filter: hoveredField === fieldName ? 'blur(0px)' : 'blur(10px)',
-      transition: 'filter 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-      cursor: 'pointer'
-    };
-  };
+
 
   const healthScore = data?.aiResult?.riskScore || 0;
   const age = data?.vitals?.age || '--';
@@ -258,11 +251,11 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="pb-20 max-w-7xl mx-auto px-6 pt-32"
+      className="pb-20 max-w-7xl mx-auto px-6 pt-24"
       id="dashboard-content"
     >
       {/* Executive Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-10">
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Shield size={14} className="text-blue-600" />
@@ -281,48 +274,17 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
                 <span className="text-xs font-bold uppercase tracking-widest">Neural Syncing...</span>
              </div>
            )}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-        {/* Core Vital Cards */}
-        {[
-          { label: 'Health Index', value: healthScore, suffix: '/100', icon: HeartPulse, color: 'text-emerald-600', border: 'border-l-emerald-500', field: 'healthScore' },
-          { label: 'Cardiovascular', value: isAnalyzing ? '...' : (aiDeepAnalysis?.cardio ?? cardioRisk ?? 0), suffix: '%', icon: Activity, color: 'text-blue-600', border: 'border-l-blue-500', field: 'cardioRisk' },
-          { label: 'Metabolic', value: isAnalyzing ? '...' : (aiDeepAnalysis?.metabolic ?? metabolicRisk ?? 0), suffix: '%', icon: Database, color: 'text-indigo-600', border: 'border-l-indigo-500', field: 'metabolicRisk' },
-          { label: 'Neurological', value: isAnalyzing ? '...' : (aiDeepAnalysis?.neuro ?? neuroRisk ?? 0), suffix: '%', icon: Brain, color: 'text-slate-600', border: 'border-l-slate-900', field: 'neuroRisk' }
-        ].map((card, i) => (
-          <motion.div key={i} whileHover={{ y: -4 }} className={`glass-panel p-8 border-l-4 ${card.border}`}>
-            <div className="flex justify-between items-start mb-6">
-               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{card.label}</span>
-               <card.icon size={18} className="opacity-20" />
-            </div>
-            <div className="flex items-baseline gap-2" style={getBlurStyle(card.field)} onMouseEnter={() => setHoveredField(card.field)} onMouseLeave={() => setHoveredField(null)}>
-               <span className={`text-4xl font-black tracking-tighter ${card.color}`}>
-                 {card.value}
-               </span>
-               {card.value !== '...' && <span className="text-xs font-bold text-slate-300">{card.suffix}</span>}
-            </div>
-          </motion.div>
-        ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Analytics Visualization */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="glass-panel p-10">
-            <div className="flex justify-between items-center mb-12">
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">Predictive Trajectory</h3>
-                <p className="text-xs text-slate-400 font-medium mt-1 uppercase tracking-widest leading-none">Diagnostic Projection Model</p>
-              </div>
-              <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-full text-[9px] font-black text-blue-600 border border-blue-100">
-                <TrendingUp size={12} />
-                AI FORECAST ACTIVE
-              </div>
-            </div>
-            <RiskChart newDataPoint={healthScore} />
-          </div>
-
+          <AnatomyMap risks={{
+            cardio: aiDeepAnalysis?.cardio || cardioRisk,
+            metabolic: aiDeepAnalysis?.metabolic || metabolicRisk,
+            neuro: aiDeepAnalysis?.neuro || neuroRisk
+          }} />
           <div className="glass-panel p-10 bg-white border border-slate-200">
             <div className="flex items-center gap-3 mb-8">
                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center animate-pulse">
@@ -357,7 +319,6 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
           <div className="glass-panel p-8">
             <h3 className="text-lg font-bold mb-8 flex items-center justify-between">
                Verification Profile
-               <Share2 size={16} className="text-slate-300" />
             </h3>
             <div className="space-y-1">
               {[
@@ -366,7 +327,7 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
                 { label: 'BMI Analysis', value: bmi === '--' ? '--' : `${bmi} kg/m²` },
                 { label: 'Lifestyle Node', value: smoking }
               ].map((item, i) => (
-                <div key={i} className="flex justify-between items-center py-4 border-b border-slate-100 last:border-0" style={getBlurStyle(item.label)} onMouseEnter={() => setHoveredField(item.label)} onMouseLeave={() => setHoveredField(null)}>
+                <div key={i} className="flex justify-between items-center py-4 border-b border-slate-100 last:border-0">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.label}</span>
                   <span className="text-sm font-bold text-slate-900">{item.value}</span>
                 </div>

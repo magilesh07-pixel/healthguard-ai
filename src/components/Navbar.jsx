@@ -6,9 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 function Navbar({
   patientData,
   reportLoading,
-  onReportStart,
-  privacyMode,
-  togglePrivacyMode
+  onReportStart
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -99,19 +97,7 @@ function Navbar({
 
           {/* Action Suite */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={togglePrivacyMode}
-              className={`hidden md:flex items-center gap-2 px-3 py-2 rounded-lg border transition-all ${
-                privacyMode 
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700' 
-                  : 'bg-slate-100/50 border-slate-200 text-slate-500 hover:bg-slate-200/80'
-              }`}
-            >
-              <Lock size={14} />
-              <span className="text-[10px] font-bold uppercase tracking-widest">
-                {privacyMode ? 'Protected' : 'Standard'}
-              </span>
-            </button>
+
 
             <button
               onClick={handleDownloadReport}
