@@ -98,24 +98,7 @@ function Landing() {
                                         <HeartPulse size={110} className="text-white drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)]" />
                                     </div>
 
-                                    {/* Floating Decorative Elements */}
-                                    <motion.div
-                                        animate={{ y: [0, -12, 0] }}
-                                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                                        className="absolute -top-4 -right-4 bg-white/80 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white shadow-xl flex items-center gap-2"
-                                    >
-                                        <Shield size={14} className="text-blue-600" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-700">HealthGuard Certified</span>
-                                    </motion.div>
 
-                                    <motion.div
-                                        animate={{ y: [0, 12, 0] }}
-                                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                                        className="absolute -bottom-4 -left-4 bg-white/80 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white shadow-xl flex items-center gap-2"
-                                    >
-                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-700">System Live</span>
-                                    </motion.div>
                                 </div>
                             </motion.div>
                         </div>
