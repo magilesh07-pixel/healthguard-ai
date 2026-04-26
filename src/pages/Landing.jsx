@@ -17,37 +17,37 @@ function Landing() {
             {/* 1. Hero Section */}
             <header className="relative pt-32 pb-24 lg:pt-48 lg:pb-36 px-6 lg:px-12">
                 <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                    
+
                     {/* Left Typography */}
                     <div className="relative z-10 text-left space-y-8">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-slate-200/50 text-slate-600 shadow-sm"
                         >
                             <Shield size={16} className="text-emerald-500" />
                             <span className="text-xs font-black uppercase tracking-widest">Enterprise Clinical Intelligence</span>
                         </motion.div>
-                        
-                        <motion.h1 
+
+                        <motion.h1
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
                             className="text-6xl lg:text-[5.5rem] font-black tracking-tight text-slate-900 leading-[1.05]"
                         >
-                            Next Generation <br/>
+                            Next Generation <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 drop-shadow-sm">Diagnostics.</span>
                         </motion.h1>
-                        
-                        <motion.p 
+
+                        <motion.p
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
                             className="text-lg lg:text-xl text-slate-500 max-w-lg leading-relaxed font-medium"
                         >
                             HealthGuard deploys elite neural networks to cross-reference patient intake with deep visual scan analysis, accelerating precise preventative healthcare protocols.
                         </motion.p>
-                        
-                        <motion.div 
+
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
                             className="flex flex-col sm:flex-row gap-5 pt-6"
                         >
-                            <button 
+                            <button
                                 onClick={() => navigate('/intake')}
                                 className="group relative flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 overflow-hidden"
                             >
@@ -55,7 +55,7 @@ function Landing() {
                                 <Stethoscope size={20} className="text-blue-400" />
                                 Initiate Protocol
                             </button>
-                            <button 
+                            <button
                                 onClick={() => navigate('/scans')}
                                 className="flex items-center justify-center gap-3 glass-panel px-8 py-4 rounded-2xl font-bold text-base text-slate-700 hover:text-blue-600 transition-all hover:bg-white active:scale-95"
                             >
@@ -70,9 +70,9 @@ function Landing() {
                         <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center">
                             {/* Background Glow */}
                             <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-[120px] animate-pulse" />
-                            
+
                             {/* Large Watermark Icon */}
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, scale: 0.8, rotate: -15 }}
                                 animate={{ opacity: 0.07, scale: 1, rotate: -15 }}
                                 transition={{ duration: 2 }}
@@ -82,7 +82,7 @@ function Landing() {
                             </motion.div>
 
                             {/* Central Premium Logo */}
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 20, scale: 0.9 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 transition={{ duration: 1, ease: "easeOut" }}
@@ -91,13 +91,31 @@ function Landing() {
                                 <div className="relative group">
                                     {/* Logo Glow */}
                                     <div className="absolute inset-0 bg-blue-600 rounded-[3rem] blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-700" />
-                                    
+
                                     {/* The Logo Card */}
                                     <div className="relative w-56 h-56 lg:w-72 lg:h-72 rounded-[3.5rem] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center border border-white/20 shadow-[0_30px_60px_rgba(37,99,235,0.25)] overflow-hidden">
                                         <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_5s_infinite]" />
                                         <HeartPulse size={110} className="text-white drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)]" />
                                     </div>
-                                    
+
+                                    {/* Floating Decorative Elements */}
+                                    <motion.div
+                                        animate={{ y: [0, -12, 0] }}
+                                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                        className="absolute -top-4 -right-4 bg-white/80 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white shadow-xl flex items-center gap-2"
+                                    >
+                                        <Shield size={14} className="text-blue-600" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-700">HealthGuard Certified</span>
+                                    </motion.div>
+
+                                    <motion.div
+                                        animate={{ y: [0, 12, 0] }}
+                                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                                        className="absolute -bottom-4 -left-4 bg-white/80 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white shadow-xl flex items-center gap-2"
+                                    >
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-700">System Live</span>
+                                    </motion.div>
                                 </div>
                             </motion.div>
                         </div>
@@ -117,7 +135,7 @@ function Landing() {
                             A seamless, zero-friction pipeline transforming raw patient data into verifiable clinical dossiers.
                         </p>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8 group">
                         {[
                             { step: "01", title: "Ingestion", icon: Users, desc: "Secure acquisition of patient vitals and demographic baselines." },
@@ -125,7 +143,7 @@ function Landing() {
                             { step: "03", title: "Synthesis", icon: BrainCircuit, desc: "Neural networks cross-reference inputs against massive medical datasets." },
                             { step: "04", title: "Reporting", icon: FileText, desc: "Instantaneous generation of institutional-grade health trajectories." }
                         ].map((phase, i) => (
-                            <motion.div 
+                            <motion.div
                                 key={i}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -160,7 +178,7 @@ function Landing() {
                             <p className="text-slate-300 text-xl leading-relaxed">
                                 Our diagnostic capability transcends basic charting. By fusing biometric risk factors with deep-segmentation visual AI, HealthGuard detects longitudinal anomalies with unparalleled precision.
                             </p>
-                            
+
                             <div className="space-y-6 pt-6">
                                 <div className="glass-panel border-white/10 bg-white/5 backdrop-blur px-8 py-6 rounded-2xl flex gap-6 hover:bg-white/10 transition-colors">
                                     <div className="text-blue-400 mt-1"><Activity size={28} /></div>
@@ -186,7 +204,7 @@ function Landing() {
                                 <HeartPulse size={80} className="text-blue-500 mb-8 z-10" />
                                 <div className="flex gap-4 items-end h-24 w-full px-12 z-10">
                                     {[40, 65, 30, 85, 55, 90, 45, 75].map((height, idx) => (
-                                        <motion.div 
+                                        <motion.div
                                             key={idx}
                                             initial={{ height: 10 }}
                                             animate={{ height: `${height}%` }}
@@ -221,17 +239,17 @@ function Landing() {
                             <span className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl font-bold text-sm">AES-256 Secured</span>
                         </div>
                     </div>
-                    
+
                     <div className="relative p-10 bg-slate-50 rounded-[2.5rem] border border-slate-100 grid grid-cols-2 gap-6">
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                           <Shield className="text-blue-500 mb-4" size={24} />
-                           <h4 className="font-bold text-slate-900">E2E Privacy</h4>
-                           <p className="text-xs text-slate-500 mt-2 leading-relaxed">End-to-end data obfuscation before any AI ingestion.</p>
+                            <Shield className="text-blue-500 mb-4" size={24} />
+                            <h4 className="font-bold text-slate-900">E2E Privacy</h4>
+                            <p className="text-xs text-slate-500 mt-2 leading-relaxed">End-to-end data obfuscation before any AI ingestion.</p>
                         </div>
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mt-8">
-                           <CheckCircle2 className="text-emerald-500 mb-4" size={24} />
-                           <h4 className="font-bold text-slate-900">SOC-2 Type II</h4>
-                           <p className="text-xs text-slate-500 mt-2 leading-relaxed">Enterprise compliance and independent auditor verified.</p>
+                            <CheckCircle2 className="text-emerald-500 mb-4" size={24} />
+                            <h4 className="font-bold text-slate-900">SOC-2 Type II</h4>
+                            <p className="text-xs text-slate-500 mt-2 leading-relaxed">Enterprise compliance and independent auditor verified.</p>
                         </div>
                     </div>
                 </div>
@@ -269,7 +287,7 @@ function Landing() {
                             <span className="text-2xl font-black tracking-tight text-slate-900">HealthGuard <span className="text-blue-600">AI</span></span>
                         </div>
                     </div>
-                    
+
                     <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="flex gap-8 text-sm font-bold text-slate-500">
                             <a href="#" className="hover:text-blue-600 transition-colors">Security Protocol</a>
