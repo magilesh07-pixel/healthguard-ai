@@ -1,18 +1,10 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const mockData = [
-  { year: '2021', risk: 12 },
-  { year: '2022', risk: 15 },
-  { year: '2023', risk: 14 },
-  { year: '2024', risk: 18 },
-  { year: '2025', risk: 21 },
-];
-
 function RiskChart({ newDataPoint }) {
   const chartData = newDataPoint 
-    ? [...mockData, { year: 'NODE-AI', risk: Number(newDataPoint) }] 
-    : mockData;
+    ? [{ year: 'Live Analysis', risk: Number(newDataPoint) }] 
+    : [];
 
   const accentColor = '#2563eb'; // blue-600
 

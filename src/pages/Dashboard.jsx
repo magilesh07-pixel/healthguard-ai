@@ -23,14 +23,14 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
     };
   };
 
-  const healthScore = data?.aiResult?.riskScore || 82;
-  const age = data?.vitals?.age || 45;
-  const gender = data?.vitals?.sex || 'Male';
-  const bmi = data?.bmi || 26.4;
-  const smoking = data?.vitals?.smoking || 'Former Smoker';
-  const sysBP = data?.vitals?.sysBP || 135;
-  const diaBP = data?.vitals?.diaBP || 85;
-  const symptoms = data?.vitals?.symptoms || 'General wellness checkup';
+  const healthScore = data?.aiResult?.riskScore || 0;
+  const age = data?.vitals?.age || '--';
+  const gender = data?.vitals?.sex || '--';
+  const bmi = data?.bmi || '--';
+  const smoking = data?.vitals?.smoking || '--';
+  const sysBP = data?.vitals?.sysBP || 0;
+  const diaBP = data?.vitals?.diaBP || 0;
+  const symptoms = data?.vitals?.symptoms || 'No symptoms reported';
 
   const cardioRisk = useMemo(() => {
     let risk = 5;
@@ -59,7 +59,13 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
     if (!data?.vitals) return;
     setIsAnalyzing(true);
     try {
-      const prompt = `Deep clinical risk analysis (JSON): BP ${sysBP}/${diaBP}, BMI ${bmi}, Age ${age}, ${gender}, ${smoking}. Reasoning in 1 sentence.`;
+      const prompt = `Perform deep clinical risk analysis. 
+      Input: BP ${sysBP}/${diaBP}, BMI ${bmi}, Age ${age}, Gender ${gender}, Smoking ${smoking}. 
+      Return JSON with exactly these keys: 
+      "cardio" (number 0-100), 
+      "metabolic" (number 0-100), 
+      "neuro" (number 0-100), 
+      "reasoning" (string, 1 sentence summary).`;
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -264,29 +270,26 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
           </div>
           <h1 className="text-5xl font-black tracking-tight text-slate-900">Health <span className="text-blue-600">Analytics</span> Hub</h1>
           <p className="text-slate-500 font-medium max-w-xl">
-             Multimodal diagnostic monitoring for {data?.vitals?.name || 'Institutional Patient-ID #882'}.
+             Clinical risk assessment for {data?.vitals?.name || 'Authorized Patient'}.
           </p>
         </div>
         
         <div className="flex items-center gap-4">
-           {/* Neural Deep-Scan button removed as per user request, replaced by auto-trigger */}
-           <div className="bg-white border border-slate-200 px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm">
-              <Clock size={16} className="text-blue-600" />
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none">Sync Status</span>
-                 <span className="text-sm font-bold text-slate-900 mt-1">Real-time Clinical Edge</span>
-              </div>
-           </div>
-        </div>
+           {isAnalyzing && (
+             <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-xl text-blue-600 border border-blue-100 animate-pulse">
+                <Brain size={16} />
+                <span className="text-xs font-bold uppercase tracking-widest">Neural Syncing...</span>
+             </div>
+           )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
         {/* Core Vital Cards */}
         {[
           { label: 'Health Index', value: healthScore, suffix: '/100', icon: HeartPulse, color: 'text-emerald-600', border: 'border-l-emerald-500', field: 'healthScore' },
-          { label: 'Cardiovascular', value: aiDeepAnalysis ? aiDeepAnalysis.cardio : cardioRisk, suffix: '%', icon: Activity, color: 'text-blue-600', border: 'border-l-blue-500', field: 'cardioRisk' },
-          { label: 'Metabolic', value: aiDeepAnalysis ? aiDeepAnalysis.metabolic : metabolicRisk, suffix: '%', icon: Database, color: 'text-indigo-600', border: 'border-l-indigo-500', field: 'metabolicRisk' },
-          { label: 'Neurological', value: aiDeepAnalysis ? aiDeepAnalysis.neuro : neuroRisk, suffix: '%', icon: Brain, color: 'text-slate-600', border: 'border-l-slate-900', field: 'neuroRisk' }
+          { label: 'Cardiovascular', value: isAnalyzing ? '...' : (aiDeepAnalysis?.cardio ?? cardioRisk ?? 0), suffix: '%', icon: Activity, color: 'text-blue-600', border: 'border-l-blue-500', field: 'cardioRisk' },
+          { label: 'Metabolic', value: isAnalyzing ? '...' : (aiDeepAnalysis?.metabolic ?? metabolicRisk ?? 0), suffix: '%', icon: Database, color: 'text-indigo-600', border: 'border-l-indigo-500', field: 'metabolicRisk' },
+          { label: 'Neurological', value: isAnalyzing ? '...' : (aiDeepAnalysis?.neuro ?? neuroRisk ?? 0), suffix: '%', icon: Brain, color: 'text-slate-600', border: 'border-l-slate-900', field: 'neuroRisk' }
         ].map((card, i) => (
           <motion.div key={i} whileHover={{ y: -4 }} className={`glass-panel p-8 border-l-4 ${card.border}`}>
             <div className="flex justify-between items-start mb-6">
@@ -294,8 +297,10 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
                <card.icon size={18} className="opacity-20" />
             </div>
             <div className="flex items-baseline gap-2" style={getBlurStyle(card.field)} onMouseEnter={() => setHoveredField(card.field)} onMouseLeave={() => setHoveredField(null)}>
-               <span className={`text-4xl font-black tracking-tighter ${card.color}`}>{card.value}</span>
-               <span className="text-xs font-bold text-slate-300">{card.suffix}</span>
+               <span className={`text-4xl font-black tracking-tighter ${card.color}`}>
+                 {card.value}
+               </span>
+               {card.value !== '...' && <span className="text-xs font-bold text-slate-300">{card.suffix}</span>}
             </div>
           </motion.div>
         ))}
@@ -356,9 +361,9 @@ function Dashboard({ data, setReportLoading, privacyMode }) {
             </h3>
             <div className="space-y-1">
               {[
-                { label: 'PT-Identification', value: data?.vitals?.name || 'PT-NODE-882' },
-                { label: 'Demographics', value: `${age}y / ${gender}` },
-                { label: 'BMI Analysis', value: `${bmi} kg/m²` },
+                { label: 'Patient-ID', value: data?.vitals?.name || 'Anonymous' },
+                { label: 'Vital Stats', value: `${age}y / ${gender}` },
+                { label: 'BMI Analysis', value: bmi === '--' ? '--' : `${bmi} kg/m²` },
                 { label: 'Lifestyle Node', value: smoking }
               ].map((item, i) => (
                 <div key={i} className="flex justify-between items-center py-4 border-b border-slate-100 last:border-0" style={getBlurStyle(item.label)} onMouseEnter={() => setHoveredField(item.label)} onMouseLeave={() => setHoveredField(null)}>
