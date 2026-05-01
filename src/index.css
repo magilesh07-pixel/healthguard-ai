@@ -52,6 +52,28 @@
         color: var(--text-high-contrast);
         letter-spacing: -0.03em;
         font-weight: 700;
+        line-height: 1.2;
+    }
+}
+
+@media (max-width: 640px) {
+    :root {
+        --radius-md: 12px;
+        --radius-lg: 16px;
+    }
+    
+    body {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .glass-panel {
+        padding: 1.25rem !important;
+    }
+    
+    h1 {
+        word-break: break-word;
+        hyphens: auto;
     }
 }
 
@@ -105,15 +127,18 @@
     position: fixed;
     border-radius: 50%;
     filter: blur(120px);
-    opacity: 0.08;
-    z-index: -1;
-    pointer-events: none;
     transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: float 20s infinite alternate ease-in-out;
 }
 
-.orb-1 { width: 60vw; height: 60vw; background: var(--accent-blue); top: -20%; left: -10%; }
-.orb-2 { width: 50vw; height: 50vw; background: var(--accent-indigo); bottom: -15%; right: -5%; }
-.orb-3 { width: 40vw; height: 40vw; background: var(--accent-emerald); top: 30%; left: 40%; }
+@keyframes float {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(50px, 50px) scale(1.1); }
+}
+
+.orb-1 { width: 60vw; height: 60vw; background: var(--accent-blue); top: -20%; left: -10%; opacity: 0.12; }
+.orb-2 { width: 50vw; height: 50vw; background: var(--accent-indigo); bottom: -15%; right: -5%; opacity: 0.1; }
+.orb-3 { width: 40vw; height: 40vw; background: var(--accent-emerald); top: 30%; left: 40%; opacity: 0.08; }
 
 /* Form Elements Styling */
 input, select, textarea {
@@ -165,4 +190,4 @@ input:focus, select:focus, textarea:focus {
 @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
-}
+}

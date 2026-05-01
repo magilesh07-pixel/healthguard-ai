@@ -52,8 +52,12 @@ function HealthForm({ onUpdateData }) {
       });
 
       if (!response.ok) {
-         const errorData = await response.json().catch(() => ({}));
-         throw new Error(errorData.error || `API Error: ${response.status}`);
+         let errorMsg = `API Error: ${response.status}`;
+         try {
+            const errorData = await response.json();
+            if (errorData.error) errorMsg = errorData.error;
+         } catch (e) {}
+         throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -82,16 +86,16 @@ function HealthForm({ onUpdateData }) {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         onSubmit={handleAnalyze} 
-        className="glass-panel p-8 md:p-10 w-full border-t-2 border-t-blue-600/20 shadow-premium"
+        className="glass-panel p-6 sm:p-8 lg:p-10 w-full border-t-2 border-t-blue-600/20 shadow-premium"
       >
-        <h2 className="text-2xl font-bold text-slate-900 mb-8 border-b border-slate-200 pb-5 flex items-center gap-3">
+        <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-6 lg:mb-8 border-b border-slate-200 pb-5 flex items-center gap-3">
           <div className="bg-blue-100 text-blue-600 p-2 rounded-xl">
              <Stethoscope size={20} />
           </div>
           Systemic Parameters
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 mb-8 lg:mb-10">
           {/* Basic Info */}
           <div className="space-y-6">
             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -209,7 +213,7 @@ function HealthForm({ onUpdateData }) {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="glass-panel p-10 space-y-8 flex flex-col items-center justify-center min-h-[300px]"
+            className="glass-panel p-8 lg:p-10 space-y-8 flex flex-col items-center justify-center min-h-[300px]"
           >
             <div className="relative">
                 <div className="w-20 h-20 rounded-full border-[4px] border-slate-100 border-t-blue-600 animate-[spin_1s_cubic-bezier(0.5,0.1,0.5,0.9)_infinite]"></div>
@@ -237,27 +241,27 @@ function HealthForm({ onUpdateData }) {
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-panel p-10 border-l-4 border-l-blue-600 relative overflow-hidden"
+            className="glass-panel p-6 sm:p-10 border-l-4 border-l-blue-600 relative overflow-hidden"
           >
-            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 mb-10 border-b border-slate-200 pb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-10 border-b border-slate-200 pb-8">
               <div>
                 <div className="flex items-center gap-3 mb-2">
                    <div className="bg-blue-100 p-2 rounded-xl text-blue-600"><ShieldPlus size={20} /></div>
-                   <h2 className="text-3xl font-black text-slate-900 tracking-tight">Intelligence Report</h2>
+                   <h2 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Intelligence Report</h2>
                 </div>
                 <p className="text-slate-500 text-sm font-medium">Automated clinical risk stratification complete.</p>
               </div>
               
-              <div className="flex items-center gap-6 bg-slate-900 px-8 py-5 rounded-3xl shadow-xl">
+              <div className="flex items-center gap-4 sm:gap-6 bg-slate-900 px-6 sm:px-8 py-4 sm:py-5 rounded-2xl sm:rounded-3xl shadow-xl w-full sm:w-auto justify-center sm:justify-start">
                 <div className="text-center">
-                  <span className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Risk Factor</span>
-                  <span className={`text-5xl font-black leading-none ${result.riskScore > 50 ? 'text-amber-400' : 'text-emerald-400'}`}>{result.riskScore}</span>
+                  <span className="block text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Risk Factor</span>
+                  <span className={`text-4xl sm:text-5xl font-black leading-none ${result.riskScore > 50 ? 'text-amber-400' : 'text-emerald-400'}`}>{result.riskScore}</span>
                 </div>
-                <div className="h-12 w-px bg-white/10"></div>
+                <div className="h-10 sm:h-12 w-px bg-white/10"></div>
                 <div className="text-center">
-                   <span className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Triaging Priority</span>
-                   <span className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest leading-none ${result.riskScore > 50 ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-                     {result.riskScore > 50 ? 'URGENT REVIEW' : 'OPTIMAL'}
+                   <span className="block text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Triaging Priority</span>
+                   <span className={`px-3 py-1.5 rounded-lg text-[8px] sm:text-[10px] font-black uppercase tracking-widest leading-none ${result.riskScore > 50 ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                     {result.riskScore > 50 ? 'URGENT' : 'OPTIMAL'}
                    </span>
                 </div>
               </div>

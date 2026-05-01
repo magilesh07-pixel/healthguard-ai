@@ -8,6 +8,10 @@ import Landing from "./pages/Landing";
 import HealthProfile from "./pages/HealthProfile";
 import Info from "./pages/Info";
 import AiDoctor from "./pages/AiDoctor";
+import Auth from "./pages/Auth";
+import LungTest from "./pages/LungTest";
+import EyeLab from "./pages/EyeLab";
+import { auth, onAuthStateChanged } from "./firebase";
 
 // Wrapper to handle path-specific UI logic
 function AppContent({
@@ -16,7 +20,10 @@ function AppContent({
     mousePosition,
     reportLoading,
     setReportLoading,
-    onSaveHistory
+    onSaveHistory,
+    user,
+    historyVersion,
+    onNewIntake
 }) {
     const location = useLocation();
     const isLanding = location.pathname === "/";
@@ -39,16 +46,20 @@ function AppContent({
                     patientData={patientData}
                     reportLoading={reportLoading}
                     onReportStart={() => setReportLoading(true)}
+                    user={user}
                 />
-                <main className={`${isLanding ? '' : 'p-6 max-w-7xl mx-auto w-full'} flex-grow relative`}>
+                <main className={`${isLanding ? '' : 'pt-24 lg:pt-44 p-6 max-w-7xl mx-auto w-full'} flex-grow relative`}>
                     <Routes>
-                        <Route path="/" element={<Landing />} />
-                        <Route path="/dashboard" element={<Dashboard data={patientData} setReportLoading={setReportLoading} />} />
-                        <Route path="/intake" element={<Intake onUpdateData={setPatientData} />} />
-                        <Route path="/scans" element={<Scans onSaveHistory={onSaveHistory} />} />
+                        <Route path="/" element={<Landing user={user} />} />
+                        <Route path="/dashboard" element={<Dashboard data={patientData} setReportLoading={setReportLoading} user={user} setPatientData={setPatientData} historyVersion={historyVersion} />} />
+                        <Route path="/intake" element={<Intake onUpdateData={onNewIntake} />} />
+                        <Route path="/scans" element={<Scans user={user} onSaveHistory={onSaveHistory} />} />
                         <Route path="/ai-doctor" element={<AiDoctor onSaveHistory={onSaveHistory} />} />
                         <Route path="/profile" element={<HealthProfile data={patientData} />} />
                         <Route path="/info/:type" element={<Info />} />
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/lungs" element={<LungTest user={user} onSaveHistory={onSaveHistory} patientData={patientData} />} />
+                        <Route path="/eyes" element={<EyeLab user={user} onSaveHistory={onSaveHistory} historyVersion={historyVersion} />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </main>
@@ -61,38 +72,36 @@ function App() {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [patientData, setPatientData] = useState(null);
     const [reportLoading, setReportLoading] = useState(false);
+    const [user, setUser] = useState(null);
+    const [historyVersion, setHistoryVersion] = useState(0);
 
     useEffect(() => {
-        // Fetch history if needed (standalone mode)
-        const fetchLatestIntake = async () => {
-            try {
-                const res = await fetch('/api/history');
-                const history = await res.json();
-                if (Array.isArray(history)) {
-                    const latestIntake = history.find(entry => entry.type === 'intake');
-                    if (latestIntake && !patientData) {
-                        setPatientData(latestIntake.data);
-                    }
-                }
-            } catch (e) {
-                console.error("History sync error:", e);
-            }
-        };
-        fetchLatestIntake();
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+            if (!currentUser) setPatientData(null); // Clear data on logout
+        });
+        return () => unsubscribe();
     }, []);
+
+    // Automatic data persistence removed per user request
+    // Data will now be lost on refresh
 
 
     const handleSaveHistory = async (type, entryData) => {
+        if (!user) return; // Don't save if not logged in
+        
         await fetch('/api/history', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-User-ID': user.uid // Pass the real global ID
             },
             body: JSON.stringify({ type, data: entryData })
         });
+        setHistoryVersion(v => v + 1);
     };
 
-    const handleUpdatePatientData = async (newData) => {
+    const handleNewIntake = async (newData) => {
         setPatientData(newData);
         handleSaveHistory('intake', newData);
     };
@@ -117,11 +126,14 @@ function App() {
         <BrowserRouter>
             <AppContent
                 patientData={patientData}
-                setPatientData={handleUpdatePatientData}
+                setPatientData={setPatientData}
+                onNewIntake={handleNewIntake}
                 mousePosition={mousePosition}
                 reportLoading={reportLoading}
                 setReportLoading={setReportLoading}
                 onSaveHistory={handleSaveHistory}
+                user={user}
+                historyVersion={historyVersion}
             />
         </BrowserRouter>
     );

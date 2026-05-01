@@ -28,8 +28,8 @@ def init_db():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        type TEXT NOT NULL, -- 'intake' or 'scan'
+        user_id TEXT NOT NULL,
+        type TEXT NOT NULL, -- 'intake', 'scan', or 'lung_test'
         data TEXT NOT NULL, -- JSON string
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -43,11 +43,12 @@ init_db()
 # History Endpoints (Global access for the demo)
 @app.route('/api/history', methods=['GET', 'POST'])
 def history():
-    user_id = 1 # Static ID for the demo since login is removed
+    # Use the global UID sent from the frontend, fallback to 'guest' if not logged in
+    user_id = request.headers.get('X-User-ID', 'guest')
 
     if request.method == 'POST':
         data = request.json
-        record_type = data.get('type') # 'intake' or 'scan'
+        record_type = data.get('type') # 'intake', 'scan', or 'chat'
         record_data = json.dumps(data.get('data'))
         
         conn = get_db_connection()
@@ -56,19 +57,40 @@ def history():
         conn.close()
         return jsonify({"message": "History saved"})
     else:
+        try:
+            conn = get_db_connection()
+            # Fetch only the records belonging to this specific global user
+            rows = conn.execute("SELECT * FROM history WHERE user_id = ? ORDER BY timestamp DESC", (user_id,)).fetchall()
+            conn.close()
+            
+            result = []
+            for row in rows:
+                result.append({
+                    "id": row['id'],
+                    "type": row['type'],
+                    "data": json.loads(row['data']),
+                    "timestamp": row['timestamp']
+                })
+            return jsonify(result)
+        except Exception as e:
+            print(f"Fetch error: {e}")
+            return jsonify([])
+
+@app.route('/api/history/<int:record_id>', methods=['DELETE'])
+def delete_history(record_id):
+    user_id = request.headers.get('X-User-ID', 'guest')
+    print(f"DEBUG: Deleting record {record_id} for user {user_id}")
+    try:
         conn = get_db_connection()
-        rows = conn.execute("SELECT * FROM history WHERE user_id = ? ORDER BY timestamp DESC", (user_id,)).fetchall()
+        cur = conn.execute("DELETE FROM history WHERE id = ? AND user_id = ?", (record_id, user_id))
+        conn.commit()
+        affected = cur.rowcount
         conn.close()
-        
-        result = []
-        for row in rows:
-            result.append({
-                "id": row['id'],
-                "type": row['type'],
-                "data": json.loads(row['data']),
-                "timestamp": row['timestamp']
-            })
-        return jsonify(result)
+        print(f"DEBUG: Deleted {affected} rows")
+        return jsonify({"message": "Record deleted", "affected": affected})
+    except Exception as e:
+        print(f"DEBUG: Delete error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
@@ -102,7 +124,7 @@ def analyze():
         }
         
         payload = {
-            "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+            "model": "llama-3.3-70b-versatile",
             "messages": messages,
             "temperature": 0.1
         }
@@ -118,16 +140,26 @@ def analyze():
         )
 
         if not response.ok:
-            err = response.json()
-            return jsonify({"error": err.get("error", {}).get("message", "Groq API error")}), response.status_code
+            try:
+                err = response.json()
+                msg = err.get("error", {}).get("message", "Groq API error")
+            except:
+                msg = response.text
+            print(f"DEBUG: Groq API Error ({response.status_code}): {msg}")
+            return jsonify({"error": msg}), response.status_code
 
         groq_data = response.json()
+        if not groq_data.get("choices") or len(groq_data["choices"]) == 0:
+            print(f"DEBUG: Groq returned empty choices: {groq_data}")
+            return jsonify({"error": "AI returned empty response"}), 500
+
         content = groq_data["choices"][0]["message"]["content"]
 
         if not historical_messages or len(historical_messages) == 0:
             try:
                 return jsonify(json.loads(content))
             except json.JSONDecodeError:
+                print(f"DEBUG: Failed to parse AI JSON: {content}")
                 return jsonify({
                     "findings": content, 
                     "status": "Requires Review", 
@@ -139,7 +171,7 @@ def analyze():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        print(f"Proxy error: {e}")
+        print(f"DEBUG: Analyze Logic Error: {e}")
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/chat', methods=['POST'])

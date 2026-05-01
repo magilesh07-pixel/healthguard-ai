@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Activity, BrainCircuit, ChevronRight, Stethoscope, Microscope, HeartPulse, FileText, CheckCircle2, Lock, ArrowRight, Upload, Users } from 'lucide-react';
+import { Shield, Activity, BrainCircuit, ChevronRight, Stethoscope, Microscope, HeartPulse, FileText, CheckCircle2, Lock, ArrowRight, Upload, Users, Sparkles } from 'lucide-react';
 
-function Landing() {
+function Landing({ user }) {
     const navigate = useNavigate();
 
     return (
@@ -15,59 +15,68 @@ function Landing() {
             </div>
 
             {/* 1. Hero Section */}
-            <header className="relative pt-32 pb-24 lg:pt-48 lg:pb-36 px-6 lg:px-12">
-                <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <header className="relative pt-24 pb-16 lg:pt-48 lg:pb-36 px-6 lg:px-12">
+                <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
                     {/* Left Typography */}
-                    <div className="relative z-10 text-left space-y-8">
+                    <div className="relative z-10 text-center lg:text-left space-y-6 lg:space-y-8">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-slate-200/50 text-slate-600 shadow-sm"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/50 backdrop-blur-md border border-blue-100/50 text-blue-600 shadow-sm"
                         >
-                            <Shield size={16} className="text-emerald-500" />
-                            <span className="text-xs font-black uppercase tracking-widest">Enterprise Clinical Intelligence</span>
+                            <Sparkles size={14} className="text-blue-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Your Personal Health Companion</span>
                         </motion.div>
 
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-                            className="text-6xl lg:text-[5.5rem] font-black tracking-tight text-slate-900 leading-[1.05]"
+                            className="text-4xl sm:text-5xl lg:text-[5.5rem] font-black tracking-tight text-slate-900 leading-[1.1] lg:leading-[1.05]"
                         >
-                            Next Generation <br />
+                            Next Generation <br className="hidden sm:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 drop-shadow-sm">Diagnostics.</span>
                         </motion.h1>
 
                         <motion.p
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-                            className="text-lg lg:text-xl text-slate-500 max-w-lg leading-relaxed font-medium"
+                            className="text-base lg:text-xl text-slate-500 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium"
                         >
-                            HealthGuard deploys elite neural networks to cross-reference patient intake with deep visual scan analysis, accelerating precise preventative healthcare protocols.
+                            HealthGuard uses friendly AI to understand your health patterns and analyze medical scans, helping you stay ahead with simple, actionable insights.
                         </motion.p>
 
                         <motion.div
                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-                            className="flex flex-col sm:flex-row gap-5 pt-6"
+                            className="flex flex-row justify-center lg:justify-start gap-5 pt-6"
                         >
                             <button
                                 onClick={() => navigate('/intake')}
-                                className="group relative flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95 overflow-hidden"
+                                className="group relative flex-shrink-0 flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 lg:py-5 rounded-2xl font-bold text-base transition-all shadow-xl shadow-blue-500/20 hover:-translate-y-1 active:scale-95 overflow-hidden"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-                                <Stethoscope size={20} className="text-blue-400" />
-                                Initiate Protocol
+                                <HeartPulse size={20} className="text-blue-200" />
+                                Start My Checkup
                             </button>
                             <button
                                 onClick={() => navigate('/scans')}
-                                className="flex items-center justify-center gap-3 glass-panel px-8 py-4 rounded-2xl font-bold text-base text-slate-700 hover:text-blue-600 transition-all hover:bg-white active:scale-95"
+                                className="group relative flex-shrink-0 flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 lg:py-5 rounded-2xl font-bold text-base transition-all shadow-xl shadow-blue-500/20 hover:-translate-y-1 active:scale-95 overflow-hidden"
                             >
-                                <Activity size={20} />
-                                Access Vision Lab
+                                <BrainCircuit size={20} className="text-blue-200" />
+                                Try Vision AI
                             </button>
+
+                            {!user && (
+                                <button
+                                    onClick={() => navigate('/auth')}
+                                    className="group relative flex-shrink-0 flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 lg:py-5 rounded-2xl font-bold text-base transition-all shadow-xl shadow-blue-500/20 hover:-translate-y-1 active:scale-95 overflow-hidden"
+                                >
+                                    <Shield size={20} className="text-blue-200" />
+                                    Save History via Login
+                                </button>
+                            )}
                         </motion.div>
                     </div>
 
                     {/* Right Extrovert Visualizer - Watermark Logo Format */}
-                    <div className="relative w-full h-[500px] lg:h-[600px] flex items-center justify-center">
-                        <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center">
+                    <div className="relative w-full h-[350px] sm:h-[500px] lg:h-[600px] flex items-center justify-center">
+                        <div className="relative w-full max-w-[350px] sm:max-w-[500px] aspect-square flex items-center justify-center">
                             {/* Background Glow */}
                             <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-[120px] animate-pulse" />
 
@@ -106,25 +115,25 @@ function Landing() {
                 </div>
             </header>
 
-            {/* 2. Advanced Workflow / Pipeline */}
-            <section className="py-32 relative z-10">
+            {/* 2. Simple Workflow */}
+            <section className="py-20 lg:py-32 relative z-10">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-20 border-b border-slate-200 pb-8">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 border-b border-slate-200 pb-8">
                         <div>
-                            <span className="text-blue-600 font-black uppercase tracking-[0.2em] text-xs mb-3 block">Operational Architecture</span>
-                            <h2 className="text-4xl lg:text-5xl font-black tracking-tight text-slate-900">HealthGuard Lifecycle</h2>
+                            <span className="text-blue-600 font-black uppercase tracking-[0.2em] text-xs mb-3 block">Simple Journey</span>
+                            <h2 className="text-3xl lg:text-5xl font-black tracking-tight text-slate-900">How It Works</h2>
                         </div>
-                        <p className="text-slate-500 text-lg max-w-md font-medium leading-relaxed">
-                            A seamless, zero-friction pipeline transforming raw patient data into verifiable clinical dossiers.
+                        <p className="text-slate-500 text-base lg:text-lg max-w-md font-medium leading-relaxed">
+                            A friendly, easy-to-follow process designed to put you in control of your health data.
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8 group">
                         {[
-                            { step: "01", title: "Ingestion", icon: Users, desc: "Secure acquisition of patient vitals and demographic baselines." },
-                            { step: "02", title: "Imaging", icon: Upload, desc: "Import high-fidelity radiology scans for visual pathology processing." },
-                            { step: "03", title: "Synthesis", icon: BrainCircuit, desc: "Neural networks cross-reference inputs against massive medical datasets." },
-                            { step: "04", title: "Reporting", icon: FileText, desc: "Instantaneous generation of institutional-grade health trajectories." }
+                            { step: "01", title: "Fill Details", icon: Users, desc: "Tell us a bit about your vitals and lifestyle habits." },
+                            { step: "02", title: "Upload Scan", icon: Upload, desc: "Easily upload any medical image for our AI to take a look." },
+                            { step: "03", title: "AI Magic", icon: BrainCircuit, desc: "Our smart assistant analyzes everything to find helpful patterns." },
+                            { step: "04", title: "Your Report", icon: FileText, desc: "Get a clear, simple report with next steps and advice." }
                         ].map((phase, i) => (
                             <motion.div
                                 key={i}
@@ -132,10 +141,10 @@ function Landing() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: i * 0.1 }}
-                                className="relative bg-white p-8 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-premium hover:-translate-y-2 transition-all duration-500"
+                                className="relative bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-premium hover:-translate-y-2 transition-all duration-500"
                             >
-                                <div className="absolute -top-3 -right-3 w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center font-mono font-black text-slate-200 text-3xl rotate-12">{phase.step}</div>
-                                <div className="w-16 h-16 rounded-[1.25rem] bg-gradient-to-br from-blue-50 to-indigo-50/50 flex items-center justify-center text-blue-600 mb-8 border border-white shadow-sm transition-transform group-hover:scale-110">
+                                <div className="absolute -top-3 -right-3 w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center font-mono font-black text-blue-200 text-xl rotate-12">{phase.step}</div>
+                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-blue-600 mb-8 border border-white shadow-sm">
                                     <phase.icon size={28} />
                                 </div>
                                 <h3 className="text-2xl font-bold text-slate-900 mb-3">{phase.title}</h3>
@@ -147,18 +156,18 @@ function Landing() {
             </section>
 
             {/* 3. Spline Analytics Engine Deep Dive */}
-            <section className="py-32 bg-slate-900 rounded-[3rem] mx-4 lg:mx-12 my-12 relative overflow-hidden shadow-[0_20px_50px_rgba(15,23,42,0.3)]">
-                <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-blue-500/10 rounded-full blur-[120px]" />
-                <div className="max-w-7xl mx-auto px-8 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                        <div className="space-y-10">
-                            <div className="inline-flex py-1.5 px-4 rounded-full bg-white/10 border border-white/20 text-blue-300 text-xs font-black uppercase tracking-widest">
+            <section className="py-20 lg:py-32 bg-slate-900 rounded-[2rem] lg:rounded-[3rem] mx-4 lg:mx-12 my-12 relative overflow-hidden shadow-2xl">
+                <div className="absolute top-0 right-0 w-[80vw] lg:w-[50vw] h-[80vw] lg:h-[50vw] bg-blue-500/10 rounded-full blur-[100px] lg:blur-[120px]" />
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+                        <div className="space-y-8 lg:space-y-10">
+                            <div className="inline-flex py-1.5 px-4 rounded-full bg-white/10 border border-white/20 text-blue-300 text-[10px] font-black uppercase tracking-widest">
                                 The Multimodal Matrix
                             </div>
-                            <h2 className="text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+                            <h2 className="text-4xl lg:text-6xl font-black tracking-tight text-white leading-tight">
                                 Seeing what standard tests miss.
                             </h2>
-                            <p className="text-slate-300 text-xl leading-relaxed">
+                            <p className="text-slate-300 text-lg lg:text-xl leading-relaxed">
                                 Our diagnostic capability transcends basic charting. By fusing biometric risk factors with deep-segmentation visual AI, HealthGuard detects longitudinal anomalies with unparalleled precision.
                             </p>
 
@@ -239,19 +248,19 @@ function Landing() {
             </section>
 
             {/* 5. Enterprise CTA */}
-            <section className="py-32">
+            <section className="py-20 lg:py-32">
                 <div className="max-w-5xl mx-auto px-6">
-                    <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[3rem] p-16 text-center shadow-premium relative overflow-hidden">
+                    <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] lg:rounded-[3rem] p-8 sm:p-12 lg:p-16 text-center shadow-premium relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-32 opacity-10 blur-3xl mix-blend-overlay pointer-events-none bg-white w-full h-full rounded-full" />
-                        <div className="relative z-10 w-20 h-20 mx-auto bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-white mb-8 border border-white/30">
-                            <Shield size={36} />
+                        <div className="relative z-10 w-16 h-16 lg:w-20 lg:h-20 mx-auto bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-white mb-8 border border-white/30">
+                            <Shield size={32} />
                         </div>
-                        <h2 className="text-4xl lg:text-5xl font-black text-white mb-6 tracking-tight">Deploy elite diagnostics instantly.</h2>
-                        <p className="text-blue-100 text-xl font-medium max-w-2xl mx-auto mb-12">
+                        <h2 className="text-3xl lg:text-5xl font-black text-white mb-6 tracking-tight">Deploy elite diagnostics instantly.</h2>
+                        <p className="text-blue-100 text-lg lg:text-xl font-medium max-w-2xl mx-auto mb-10 lg:mb-12">
                             Elevate your medical foresight by initiating the HealthGuard dashboard. Your first clinical trajectory starts here.
                         </p>
-                        <div className="flex flex-col sm:flex-row justify-center gap-5">
-                            <button onClick={() => navigate('/intake')} className="bg-white text-blue-700 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-3 shadow-2xl active:scale-95">
+                        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-5">
+                            <button onClick={() => navigate('/intake')} className="bg-white text-blue-700 px-8 py-4 lg:px-10 lg:py-5 rounded-2xl font-black text-base lg:text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-3 shadow-2xl active:scale-95">
                                 Initialize Console <ArrowRight size={20} />
                             </button>
                         </div>

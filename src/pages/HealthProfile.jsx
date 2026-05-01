@@ -36,17 +36,17 @@ function HealthProfile({ data }) {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="pb-20 max-w-7xl mx-auto px-6 pt-32"
+      className="pb-20 max-w-7xl mx-auto px-6 pt-24 lg:pt-32"
     >
       {/* Executive Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 lg:mb-16">
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Shield size={14} className="text-blue-600" />
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Electronic Health Record</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tight text-slate-900">Patient <span className="text-blue-600">Dossier</span></h1>
-          <p className="text-slate-500 font-medium max-w-xl">
+          <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-slate-900">Patient <span className="text-blue-600">Dossier</span></h1>
+          <p className="text-slate-500 text-sm lg:text-base font-medium max-w-xl">
              Centralized demographic and vitals repository for comprehensive clinical oversight.
           </p>
         </div>
@@ -65,7 +65,7 @@ function HealthProfile({ data }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Personal Info */}
         <motion.div variants={itemVariants} className="space-y-6">
-          <div className="glass-panel p-8 space-y-8 bg-slate-900 text-white shadow-premium border-none relative overflow-hidden group">
+          <div className="glass-panel p-6 sm:p-8 space-y-8 bg-slate-900 text-white shadow-premium border-none relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
                <User size={160} />
             </div>
@@ -121,21 +121,21 @@ function HealthProfile({ data }) {
 
         {/* Right Column: Clinical History & Vitals */}
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="glass-panel p-8 border-t-4 border-rose-500 relative overflow-hidden group">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="glass-panel p-6 sm:p-8 border-t-4 border-rose-500 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
                        <Heart size={120} />
                     </div>
                     <div className="relative z-10 space-y-6">
                         <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Cardiac Profile</h4>
                         <div>
-                            <p className="text-4xl font-black text-slate-900 tracking-tighter mb-1">{patient.sysBP}/{patient.diaBP}</p>
+                            <p className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tighter mb-1">{patient.sysBP}/{patient.diaBP}</p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">mmHg (Hemodynamics)</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="glass-panel p-8 border-t-4 border-indigo-500 relative overflow-hidden group">
+                <div className="glass-panel p-6 sm:p-8 border-t-4 border-indigo-500 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
                        <Activity size={120} />
                     </div>
@@ -149,8 +149,8 @@ function HealthProfile({ data }) {
                 </div>
             </div>
 
-            <div className="glass-panel p-8">
-                <h3 className="text-lg font-bold mb-8 flex items-center gap-3">
+            <div className="glass-panel p-6 sm:p-8">
+                <h3 className="text-base lg:text-lg font-bold mb-8 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
                        <ShieldCheck size={18} />
                     </div>
@@ -158,11 +158,11 @@ function HealthProfile({ data }) {
                 </h3>
                 
                 <div className="space-y-6">
-                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-100">
                         <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
                             <Activity size={14} className="text-blue-500" /> Clinical Presentation
                         </h5>
-                        <p className="text-slate-900 font-medium text-lg leading-relaxed">
+                        <p className="text-slate-900 font-medium text-base lg:text-lg leading-relaxed">
                             {symptoms}
                         </p>
                     </div>
@@ -202,17 +202,17 @@ function HealthProfile({ data }) {
                 </div>
             </div>
 
-            <Link to="/scans" className="w-full glass-panel p-8 border-dashed border-2 hover:border-blue-500 hover:bg-blue-50/50 transition-all flex items-center justify-between group cursor-pointer">
-                <div className="flex items-center gap-5">
-                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-inner">
+            <Link to="/scans" className="w-full glass-panel p-6 sm:p-8 border-dashed border-2 hover:border-blue-500 hover:bg-blue-50/50 transition-all flex items-center justify-between group cursor-pointer">
+                <div className="flex items-center gap-4 sm:gap-5">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-inner">
                         <FileText size={20} />
                     </div>
                     <div className="text-left">
-                        <p className="font-bold text-slate-900 mb-1">Clinical Document Vault</p>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Access archived medical reports</p>
+                        <p className="font-bold text-sm sm:text-base text-slate-900 mb-1">Clinical Document Vault</p>
+                        <p className="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Access archived medical reports</p>
                     </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:border-blue-200 transition-all">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:border-blue-200 transition-all">
                    <ChevronRight size={18} className="text-blue-600 ml-0.5" />
                 </div>
             </Link>

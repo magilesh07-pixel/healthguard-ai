@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { BrainCircuit, Upload, FileImage, ShieldAlert, CheckCircle2, AlertTriangle, Image as ImageIcon, Search, Microscope, Activity, MessageSquare, Shield, ScanLine } from 'lucide-react';
+import { BrainCircuit, Upload, FileImage, ShieldAlert, CheckCircle2, AlertTriangle, Image as ImageIcon, Search, Microscope, Activity, MessageSquare, Shield, ScanLine, Trash2, History as HistoryIcon, Clock, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function Scans({ onSaveHistory }) {
+function Scans({ user, onSaveHistory }) {
+  const [history, setHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -15,24 +17,42 @@ function Scans({ onSaveHistory }) {
   const fileInputRef = useRef(null);
   const chatEndRef = useRef(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('last_scan_result');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setResult(parsed);
-        setChatMessages([{ role: 'assistant', content: parsed.findings }]);
-      } catch (e) {
-        console.error("Failed to load saved scan", e);
-      }
+  const fetchHistory = async () => {
+    if (!user) return;
+    setHistoryLoading(true);
+    try {
+      const res = await fetch('/api/history', {
+        headers: { 'X-User-ID': user.uid }
+      });
+      const result = await res.json();
+      // Only show vision scans
+      setHistory(result.filter(item => item.type === 'scan'));
+    } catch (e) {
+      console.error("History fetch error:", e);
+    } finally {
+      setHistoryLoading(false);
     }
-  }, []);
+  };
+
+  const deleteHistoryItem = async (id) => {
+    if (!window.confirm("Delete this scan record?")) return;
+    
+    try {
+      const res = await fetch(`/api/history/${id}`, {
+        method: 'DELETE',
+        headers: { 'X-User-ID': user.uid }
+      });
+      if (res.ok) {
+        fetchHistory(); // Refresh local list
+      }
+    } catch (e) {
+      console.error("Delete error:", e);
+    }
+  };
 
   useEffect(() => {
-    if (result) {
-      localStorage.setItem('last_scan_result', JSON.stringify(result));
-    }
-  }, [result]);
+    fetchHistory();
+  }, [user]);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -168,16 +188,16 @@ function Scans({ onSaveHistory }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="max-w-7xl mx-auto px-6 pt-32 pb-20"
+      className="max-w-7xl mx-auto px-6 pt-24 lg:pt-32 pb-20"
     >
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 lg:mb-16">
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Shield size={14} className="text-blue-600" />
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Radiology Neural Net v4.1</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tight text-slate-900">Vision <span className="text-blue-600">Analytics</span> Lab</h1>
-          <p className="text-slate-500 font-medium max-w-xl">
+          <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-slate-900">Vision <span className="text-blue-600">Analytics</span> Lab</h1>
+          <p className="text-slate-500 text-sm lg:text-base font-medium max-w-xl">
              Sub-millimeter structural analysis leveraging multi-modal deep learning for clinical-grade anomaly detection.
           </p>
         </div>
@@ -187,7 +207,7 @@ function Scans({ onSaveHistory }) {
         
         {/* Input Interface */}
         <div className="xl:col-span-5 flex flex-col space-y-6">
-          <div className="glass-panel p-8 bg-slate-50 flex-1 flex flex-col relative overflow-hidden group border-slate-200">
+          <div className="glass-panel p-6 sm:p-8 bg-slate-50 flex-1 flex flex-col relative overflow-hidden group border-slate-200">
              {/* Decorative Background */}
              <div className="absolute -top-32 -right-32 text-blue-500/5 group-hover:text-blue-500/10 transition-colors pointer-events-none">
                  <ScanLine size={300} />
@@ -205,10 +225,10 @@ function Scans({ onSaveHistory }) {
 
                 {!previewUrl ? (
                   <div 
-                    className="flex-1 flex flex-col items-center justify-center text-center cursor-pointer bg-white border-2 border-dashed border-slate-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all p-10 min-h-[300px]"
+                    className="flex-1 flex flex-col items-center justify-center text-center cursor-pointer bg-white border-2 border-dashed border-slate-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all p-6 sm:p-10 min-h-[250px] sm:min-h-[300px]"
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 mb-6 shadow-inner">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 mb-6 shadow-inner">
                       <Upload size={28} />
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 mb-2">Drag & Drop Scan</h3>
@@ -260,8 +280,8 @@ function Scans({ onSaveHistory }) {
         </div>
 
         {/* Intelligence Output */}
-        <div className="xl:col-span-7 flex flex-col space-y-6 min-h-[600px]">
-          <div className="glass-panel p-8 md:p-10 flex-1 flex flex-col">
+        <div className="xl:col-span-7 flex flex-col space-y-6 min-h-[500px] lg:min-h-[600px]">
+          <div className="glass-panel p-6 sm:p-8 lg:p-10 flex-1 flex flex-col">
              
              <AnimatePresence mode="wait">
                 {!analyzing && !result && !error && (
@@ -328,17 +348,17 @@ function Scans({ onSaveHistory }) {
                        </div>
                     </div>
 
-                    <div className="bg-slate-900 text-white p-8 rounded-2xl shadow-premium mb-8 relative overflow-hidden group">
+                    <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-2xl shadow-premium mb-8 relative overflow-hidden group">
                        <div className="absolute -top-10 -right-10 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-700">
                           <BrainCircuit size={180} />
                        </div>
-                       <p className="text-xl leading-relaxed font-medium relative z-10">
+                       <p className="text-lg lg:text-xl leading-relaxed font-medium relative z-10">
                          "{result.findings}"
                        </p>
                        {result.status !== 'Invalid Image Source' && (
                          <div className="mt-8 pt-6 border-t border-white/10 relative z-10 flex items-center justify-between">
                             <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Confidence Interval</span>
-                            <span className="text-2xl font-black">{result.confidence}%</span>
+                            <span className="text-xl sm:text-2xl font-black">{result.confidence}%</span>
                          </div>
                        )}
                     </div>
@@ -410,6 +430,92 @@ function Scans({ onSaveHistory }) {
           </div>
         </div>
 
+      </div>
+
+      {/* History Section */}
+      <div className="mt-20 lg:mt-32">
+        <div className="flex items-center justify-between mb-10">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 mb-2">
+              <HistoryIcon size={14} className="text-blue-600" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Archival Records</span>
+            </div>
+            <h2 className="text-3xl font-black text-slate-900">Imaging <span className="text-blue-600">Archive</span></h2>
+          </div>
+          
+          <div className="flex items-center gap-2 text-slate-400">
+             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+             <span className="text-[10px] font-black uppercase tracking-widest">Auto-Synchronized</span>
+          </div>
+        </div>
+
+        {historyLoading ? (
+          <div className="flex items-center justify-center py-20">
+             <div className="w-10 h-10 border-4 border-slate-100 border-t-blue-600 rounded-full animate-spin"></div>
+          </div>
+        ) : history.length === 0 ? (
+          <div className="glass-panel p-16 text-center border-dashed border-2 border-slate-200">
+             <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 mx-auto mb-6">
+                <FileImage size={32} />
+             </div>
+             <h3 className="text-lg font-bold text-slate-900 mb-2">No Archived Scans</h3>
+             <p className="text-slate-500 text-sm max-w-xs mx-auto">Your medical imaging history will appear here once you complete a neural analysis.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {history.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="glass-panel p-6 border-slate-200 hover:border-blue-300 transition-all group"
+              >
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
+                      <Microscope size={18} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 text-sm">{item.data.type || 'Medical Scan'}</h4>
+                      <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold">
+                        <Clock size={10} />
+                        {new Date(item.timestamp).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-1">
+                    <motion.button 
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => deleteHistoryItem(item.id)}
+                      className="p-2 rounded-xl hover:bg-red-50 text-slate-200 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </motion.button>
+                  </div>
+                </div>
+
+                <div className="mb-6 h-16 overflow-hidden">
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed line-clamp-3">
+                    {item.data.findings}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center gap-2">
+                     <span className={`w-2 h-2 rounded-full ${item.data.status === 'Normal' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{item.data.status}</span>
+                  </div>
+                  <div className="text-blue-600 font-black text-xs">
+                    {item.data.confidence}% Confidence
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );

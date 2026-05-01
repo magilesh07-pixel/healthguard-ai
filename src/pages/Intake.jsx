@@ -1,20 +1,19 @@
 import React from 'react';
 import HealthForm from '../components/HealthForm';
-import { Users, FileText, CheckCircle2, Shield, AlertCircle } from 'lucide-react';
+import { Users, FileText, CheckCircle2, Shield, AlertCircle, Activity } from 'lucide-react';
 
 function Intake({ onUpdateData }) {
   return (
-    <div className="pb-20 max-w-7xl mx-auto px-6 pt-32">
-      {/* Executive Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
+    <div className="pb-20 max-w-7xl mx-auto px-6 pt-24 lg:pt-32">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 lg:mb-16">
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
-            <Shield size={14} className="text-blue-600" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Data Acquisition Node</span>
+            <Activity size={14} className="text-blue-600" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Personal Health Profile</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tight text-slate-900">Clinical <span className="text-blue-600">Intake</span></h1>
-          <p className="text-slate-500 font-medium max-w-xl">
-             Structured telemetry collection for predictive risk modeling and automated triage.
+          <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-slate-900">Clinical <span className="text-blue-600">Intake</span></h1>
+          <p className="text-slate-500 text-sm lg:text-base font-medium max-w-xl">
+             Tell us about yourself so our AI can provide the most accurate insights.
           </p>
         </div>
       </div>
@@ -23,9 +22,9 @@ function Intake({ onUpdateData }) {
         
         {/* Left column: Information */}
         <div className="xl:col-span-4 space-y-6">
-          <div className="p-10 rounded-[32px] bg-gradient-to-br from-slate-900 to-indigo-950 text-white shadow-premium relative overflow-hidden group border border-white/5">
+          <div className="p-8 lg:p-10 rounded-[2rem] bg-gradient-to-br from-slate-900 to-indigo-950 text-white shadow-premium relative overflow-hidden group border border-white/5">
             <div className="absolute -top-12 -right-12 p-8 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-               <FileText size={200} />
+               <FileText size={160} lg:size={200} />
             </div>
             <div className="relative z-10 space-y-8">
                <div className="flex items-center gap-4">

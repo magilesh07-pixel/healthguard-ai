@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "dependencies": {
+        "firebase": "^12.12.1",
         "framer-motion": "^12.36.0",
         "html2canvas": "^1.4.1",
         "jspdf": "^4.2.0",
@@ -29,4 +30,3 @@
         "vite": "^6.0.0"
     }
 }
-

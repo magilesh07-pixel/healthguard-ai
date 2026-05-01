@@ -31,7 +31,7 @@ def init_db():
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
+            user_id TEXT NOT NULL,
             type TEXT NOT NULL,
             data TEXT NOT NULL,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -47,7 +47,7 @@ init_db()
 
 @app.route('/api/history', methods=['GET', 'POST'])
 def history():
-    user_id = 1
+    user_id = request.headers.get('X-User-ID', 'guest')
     if request.method == 'POST':
         try:
             data = request.json
@@ -79,6 +79,22 @@ def history():
         except Exception as e:
             return jsonify([])
 
+@app.route('/api/history/<int:record_id>', methods=['DELETE'])
+def delete_history(record_id):
+    user_id = request.headers.get('X-User-ID', 'guest')
+    print(f"DEBUG: Attempting to delete record {record_id} for user {user_id}")
+    try:
+        conn = get_db_connection()
+        cur = conn.execute("DELETE FROM history WHERE id = ? AND user_id = ?", (record_id, user_id))
+        conn.commit()
+        affected = cur.rowcount
+        conn.close()
+        print(f"DEBUG: Deleted {affected} rows")
+        return jsonify({"message": "Record deleted", "affected": affected})
+    except Exception as e:
+        print(f"DEBUG: Delete error: {e}")
+        return jsonify({"error": str(e)}), 500
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 @app.route('/api/analyze', methods=['POST'])
@@ -103,7 +119,7 @@ def analyze():
 
         headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
         payload = {
-            "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+            "model": "llama-3.3-70b-versatile",
             "messages": messages,
             "temperature": 0.1
         }

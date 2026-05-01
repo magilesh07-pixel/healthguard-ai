@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Stethoscope, AlertTriangle, Zap, Heart, Brain, Activity, ChevronRight, WifiOff } from 'lucide-react';
+import { Send, Stethoscope, AlertTriangle, Zap, Heart, Brain, Activity, ChevronRight, WifiOff, MessageSquare } from 'lucide-react';
 
 const GREETING = "Hello! I'm Dr. M.B.Magilesh, your HealthGuard AI medical consultant. While I can provide general health information and guidance, please remember I'm an AI and my advice should not replace a licensed physician's diagnosis.\n\nHow can I help you today? 🩺";
 
@@ -58,30 +58,8 @@ function AiDoctor({ onSaveHistory }) {
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    const fetchChatHistory = async () => {
-      try {
-        const res = await fetch('/api/history');
-        const history = await res.json();
-        if (Array.isArray(history)) {
-          const chatEntries = history
-            .filter(entry => entry.type === 'chat')
-            .map(entry => entry.data)
-            .flat();
-          
-          if (chatEntries.length > 0) {
-            setMessages([
-              { role: 'assistant', content: GREETING, id: 0 },
-              ...chatEntries
-            ]);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to load chat history", e);
-      }
-    };
-    fetchChatHistory();
-  }, []);
+  // History sync removed per user request
+  // Chat will reset on refresh
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -152,12 +130,12 @@ function AiDoctor({ onSaveHistory }) {
       <div className="flex items-center justify-between flex-shrink-0 pt-2">
         <div>
           <h1 className="text-3xl font-bold text-[var(--text-primary)] tracking-tight flex items-center gap-3">
-            <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-700 flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.3)]">
-              <Stethoscope size={20} className="text-white" />
+            <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.3)]">
+              <MessageSquare size={20} className="text-white" />
             </span>
-            AI Doctor
+            Ask the Doctor
           </h1>
-          <p className="text-[var(--text-secondary)] text-sm mt-1 ml-[52px]">Clinical AI Consultation — Dr. M.B.Magilesh</p>
+          <p className="text-[var(--text-secondary)] text-sm mt-1 ml-[52px]">Your friendly AI health companion</p>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 bg-emerald-500/5 border border-emerald-500/10 px-4 py-2 rounded-full">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

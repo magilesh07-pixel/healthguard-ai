@@ -7,9 +7,9 @@ const AnatomyMap = ({ risks }) => {
     { name: 'Neurological', icon: Brain, risk: risks?.neuro || 0, color: 'text-indigo-500', bg: 'bg-indigo-50' },
     { name: 'Cardiovascular', icon: Heart, risk: risks?.cardio || 0, color: 'text-rose-500', bg: 'bg-rose-50' },
     { name: 'Metabolic', icon: Zap, risk: risks?.metabolic || 0, color: 'text-amber-500', bg: 'bg-amber-50' },
-    { name: 'Respiratory', icon: Activity, risk: 12, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { name: 'Immune System', icon: Shield, risk: 8, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { name: 'Homeostasis', icon: Thermometer, risk: 15, color: 'text-cyan-500', bg: 'bg-cyan-50' },
+    { name: 'Respiratory', icon: Activity, risk: risks?.respiratory || 0, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { name: 'Immune System', icon: Shield, risk: risks?.immune || 0, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { name: 'Homeostasis', icon: Thermometer, risk: risks?.homeostasis || 0, color: 'text-cyan-500', bg: 'bg-cyan-50' },
   ];
 
   return (
@@ -21,7 +21,7 @@ const AnatomyMap = ({ risks }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {systems.map((s, i) => (
           <motion.div
             key={i}
